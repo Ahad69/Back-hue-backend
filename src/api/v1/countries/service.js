@@ -48,9 +48,11 @@ exports.getMediasService = async (req, res) => {
       };
     }
  
-    Country.find(query)
+    Country.find({})
       .select("-__v ").sort()
       .exec((error, categories) => {
+        console.log(categories)
+
         if (error) return res.status(400).json({ error });
         if (categories) {
           const countryList = createCategories(categories);
@@ -66,6 +68,8 @@ exports.getMediasService = async (req, res) => {
     return response;
   }
 };
+
+
 
 // add Medias
 exports.addCountryService = async (req, res) => {
