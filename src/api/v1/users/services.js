@@ -49,7 +49,7 @@ exports.signinUsers = async (req, res) => {
       return res.status(422).json({
         Success: false,
         code: 401,
-        message: "Invalid Credential user not found",
+        message: "User Not Found",
       });
     }
 
@@ -72,14 +72,15 @@ exports.signinUsers = async (req, res) => {
       return res.status(422).json({
         Success: false,
         code: 422,
-        message: "Invalid Credential inccore pass"  ,
+        message: "Invalid password"  ,
       });
     }
   } catch (error) {
     res.status(401).json({
       Success: false,
       code: 401,
-      message: "Invalid Credential asdf",
+      message: "Invalid Credential",
+      error : error
     });
   }
 };
