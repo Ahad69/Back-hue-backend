@@ -14,7 +14,7 @@ module.exports = {
   PORT: process.env.PORT || 5000,
   dbConnection: () =>
     mongoose
-      .connect(process.env.CONNECTION_URL)
+      .connect("mongodb+srv://ecommerce:Dhaka1230@cluster0.onrgmfc.mongodb.net/backheu?retryWrites=true&w=majority")
       .then(console.log(`DB connection successfull`))
       .catch((error) => console.log(`Error to connect DB: ${error.message}`)),
 };
