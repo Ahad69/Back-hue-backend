@@ -9,8 +9,8 @@ const productSchema = Schema({
   subCategory : { type: String },
   description: { type: String },
   city: { type: String },
+  age: { type: String },
   cities: { type: Array },
-
   imgF: {type : String},
   imgS: {type : String},
   types : {
