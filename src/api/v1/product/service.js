@@ -161,9 +161,20 @@ exports.updatePremiumService = async ({ id,  isDelete}) => {
      
 
       const products = await Product.aggregate([
-            { $sort : { isPremium :  -1 } }
+            { $sort : { isPremium :  -1 } },
+            { $sort : { _id :  -1 } },
+            {
+              $lookup:
+              {
+                from: 'users',
+                localField: 'posterId',
+                foreignField: '_id',
+                as: 'owner',
+              }
+            }
           ]
        )
+  
   
       if (products.length === 0) {
         response.code = 404;

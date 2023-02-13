@@ -13,9 +13,7 @@ const productSchema = Schema({
   cities: { type: Array },
   imgF: {type : String},
   imgS: {type : String},
-  types : {
-    type : String
-  },
+  posterId : {type: mongoose.Schema.Types.ObjectId},
   isDelete : { type : Boolean , default: false },
   isPremium : { type : Boolean }
 },

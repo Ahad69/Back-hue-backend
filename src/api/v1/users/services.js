@@ -2,9 +2,9 @@ const { User } = require("../models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const generateJwtToken = ({ _id, firstName, lastName, avater }) => {
+const generateJwtToken = ({ _id, firstName, lastName, avater , email }) => {
   return jwt.sign(
-    { _id, firstName, lastName, avater },
+    { _id, firstName, lastName, avater , email },
     process.env.JWT_SECRET,
     {
       expiresIn: "1d",
@@ -61,6 +61,7 @@ exports.signinUsers = async (req, res) => {
         firstName: user.firstName,
         lastName: user.lastName,
         avater: user.avater,
+        email: user.email,
       });
 
       res.status(200).json({
