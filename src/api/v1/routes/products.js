@@ -1,7 +1,8 @@
 const router = require('express').Router();
 
 
-const { addProduct , getProducts , searchProduct , getProduct , deleteProduct , updateProduct , updatePremium} = require('../product/controller');
+const verifyToken = require('../middleware/checkLogin');
+const { addProduct , getProducts , searchProduct , getProduct , deleteProduct , updateProduct , updatePremium, getPosterPost} = require('../product/controller');
 
 
 
@@ -18,5 +19,7 @@ router.delete('/:id' ,  deleteProduct)
 router.get('/search' ,    searchProduct)
 
 router.get('/:id',  getProduct)
+
+router.get('/posterid/:id', verifyToken,  getPosterPost)
 
 module.exports = router;

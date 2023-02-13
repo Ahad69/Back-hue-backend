@@ -158,7 +158,6 @@ exports.updatePremiumService = async ({ id,  isDelete}) => {
     };
   
     try {
-     
 
       const products = await Product.aggregate([
          
@@ -238,6 +237,41 @@ exports.updatePremiumService = async ({ id,  isDelete}) => {
     }
   };
   
+
+
+  // get one Products by id
+  exports.getOnlyUserPosts = async ({ id }) => {
+    const response = {
+      code: 200,
+      status: 'success',
+      message: 'Fetch deatiled Product successfully',
+      data: {},
+    };
+
+    try {
+      response.data.product = await Product.find({
+        posterId : id,
+        isDelete: false,
+      })
+      .sort({ _id :  -1})
+        .select('-__v -isDelete')
+        .exec();
+  
+      if (!response.data.product) {
+        response.code = 404;
+        response.status = 'failed';
+        response.message = 'No Product found';
+        return response;
+      }
+  
+      return response;
+    } catch (error) {
+      response.code = 500;
+      response.status = 'failed';
+      response.message = 'Error. Try again';
+      return response;
+    }
+  };
 
 
   // get one Products by id
