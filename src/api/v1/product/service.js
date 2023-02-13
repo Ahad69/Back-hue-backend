@@ -161,8 +161,9 @@ exports.updatePremiumService = async ({ id,  isDelete}) => {
      
 
       const products = await Product.aggregate([
-            { $sort : { isPremium :  -1 } },
-            { $sort : { _id :  -1 } },
+         
+       
+            { $sort : { isPremium :  -1 , _id :  -1 } },
             {
               $lookup:
               {
