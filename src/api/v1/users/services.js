@@ -54,6 +54,7 @@ exports.signinUsers = async (req, res) => {
     }
 
     const isPasswordMatched = await bcrypt.compare(password, user.password);
+    
 
     if (isPasswordMatched) {
       const token = generateJwtToken({
@@ -77,10 +78,11 @@ exports.signinUsers = async (req, res) => {
       });
     }
   } catch (error) {
+    console.log(error)
     res.status(401).json({
       Success: false,
       code: 401,
-      message: "Invalid Credential",
+      message: "Invalid Credential a",
       error : error
     });
   }
@@ -116,14 +118,12 @@ exports.getUsersService = async (req, res) => {
 
 
 // update Users
-exports.updateUserService = async ({
+exports.updateUserAddressService = async ({
   id,
-  name,
-  category,
-  description,
   city,
-  cities,
-  isDelete,
+  zipCode,
+  regionName,
+  country,
 }) => {
   const response = {
     code: 200,
@@ -132,8 +132,14 @@ exports.updateUserService = async ({
     data: {},
   };
 
+  console.log(  
+    id,
+    city,
+    zipCode,
+    regionName,
+    country,)
   try {
-    const User = await User.findOne({
+    const user = await User.findOne({
       _id: id,
     }).exec();
     if (!User) {
@@ -143,15 +149,14 @@ exports.updateUserService = async ({
       return response;
     }
 
-    User.name = name ? name : User.name;
-    User.category = category ? category : User.category;
-    User.description = description ? description : User.description;
-    User.city = city ? city : User.city;
-    User.cities = cities ? cities : User.cities;
+    user.address.country = country ? country : user.address.country;
+    user.address.zipCode = zipCode ? zipCode : user.address.zipCode;
+    user.address.city = city ? city : user.address.city;
+    user.address.regionName = regionName ? regionName : user.address.regionName;
 
-    await User.save();
+    await user.save();
 
-    response.data.User = User;
+    response.data.user = user;
 
     return response;
   } catch (error) {
@@ -161,6 +166,52 @@ exports.updateUserService = async ({
     return response;
   }
 };
+
+exports.updateUserService = async ({
+  id,
+  firstName,
+  lastName,
+  email,
+  phone,
+  avater,
+}) => {
+  const response = {
+    code: 200,
+    status: "success",
+    message: "User updated successfully",
+    data: {},
+  };
+
+  try {
+    const user = await User.findOne({
+      _id: id,
+    }).exec();
+    if (!User) {
+      response.code = 422;
+      response.status = "failed";
+      response.message = "No User data found";
+      return response;
+    }
+
+    user.firstName = firstName ? firstName : user.firstName;
+    user.lastName = lastName ? lastName : user.lastName;
+    user.email = email ? email : user.email;
+    user.phone = phone ? phone : user.phone;
+    user.avater = avater ? avater : user.avater;
+
+    await user.save();
+
+    response.data.user = user;
+
+    return response;
+  } catch (error) {
+    response.code = 500;
+    response.status = "failed";
+    response.message = "Error. Try again";
+    return response;
+  }
+};
+
 
 // update Users
 exports.updatePremiumService = async ({ id, isDelete }) => {
@@ -280,14 +331,14 @@ exports.getUserService = async ({ id }) => {
   };
 
   try {
-    response.data.User = await User.findOne({
+    response.data.user = await User.findOne({
       _id: id,
       isDelete: false,
     })
       .select("-__v -isDelete")
       .exec();
 
-    if (!response.data.User) {
+    if (!response.data.user) {
       response.code = 404;
       response.status = "failed";
       response.message = "No User found";

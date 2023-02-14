@@ -1,4 +1,4 @@
-const {  addUserService , getUsersService  , searchUserService , getUserService , deleteUserService , updateUserService, updatePremiumService } = require("./services")
+const {  addUserService , getUsersService  , searchUserService , getUserService , deleteUserService , updateUserService, updatePremiumService, updateUserAddressService } = require("./services")
 
 // add Users
 exports.addUser = async (req, res) => {
@@ -10,17 +10,32 @@ exports.addUser = async (req, res) => {
   };
   
 
+
+
   // update Users
   exports.updateUser = async (req, res) => {
     const { status, code, message, data } = await updateUserService({
       ...req.params,
       ...req.body,
     });
-    if (data.User) {
+    if (data.user) {
       return res.status(code).json({ code, status, message, data });
     }
     res.status(code).json({ code, status, message });
   };
+  // update Users
+  exports.updateUserAddress = async (req, res) => {
+    const { status, code, message, data } = await updateUserAddressService({
+      ...req.params,
+      ...req.body,
+    });
+    if (data.user) {
+      return res.status(code).json({ code, status, message, data });
+    }
+    res.status(code).json({ code, status, message });
+  };
+
+
 
   // update Users
   exports.updatePremium = async (req, res) => {
