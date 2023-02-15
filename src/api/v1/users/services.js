@@ -2,9 +2,9 @@ const { User } = require("../models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const generateJwtToken = ({ _id, firstName, lastName, avater , email }) => {
+const generateJwtToken = ({ _id, firstName, lastName, avater , email , role}) => {
   return jwt.sign(
-    { _id, firstName, lastName, avater , email },
+    { _id, firstName, lastName, avater , email , role},
     process.env.JWT_SECRET,
     {
       expiresIn: "1d",
@@ -30,6 +30,7 @@ exports.addUserService = async (req, res) => {
         avater,
         password: hashedPassword,
         address,
+
       });
 
       await newUser.save();
@@ -63,6 +64,7 @@ exports.signinUsers = async (req, res) => {
         lastName: user.lastName,
         avater: user.avater,
         email: user.email,
+        role : user.role
       });
 
       res.status(200).json({
@@ -259,20 +261,20 @@ exports.deleteUserService = async ({ id }) => {
     status: "success",
     message: "Delete User successfully",
   };
-  console.log(id);
+
   try {
-    const User = await User.findOne({
+    const user = await User.findOne({
       _id: id,
       isDelete: false,
     });
-    if (!User) {
+    if (!user) {
       response.code = 404;
       response.status = "failed";
       response.message = "No User data found";
       return response;
     }
 
-    await User.remove();
+    await user.remove();
 
     return response;
   } catch (error) {

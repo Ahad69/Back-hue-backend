@@ -11,6 +11,7 @@ const productSchema = Schema({
   city: { type: String },
   age: { type: String },
   cities: { type: Array },
+  isApproved : { type : Boolean , default: false },
   imgF: {type : String},
   imgS: {type : String},
   posterId : {type: mongoose.Schema.Types.ObjectId},

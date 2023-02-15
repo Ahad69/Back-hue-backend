@@ -1,4 +1,4 @@
-const {  addProductService , getProductsService  , searchProductService , getProductService , deleteProductService , updateProductService, updatePremiumService, getOnlyUserPosts } = require("./service")
+const {  addProductService , getProductsService  , searchProductService , getProductService , deleteProductService , updateProductService, updateApproveService, getOnlyUserPosts, getUnApprovedService, getApprovedService } = require("./service")
 
 // add Products
 exports.addProduct = async (req, res) => {
@@ -23,8 +23,8 @@ exports.addProduct = async (req, res) => {
   };
 
   // update Products
-  exports.updatePremium = async (req, res) => {
-    const { status, code, message, data } = await updatePremiumService({
+  exports.updateApprove = async (req, res) => {
+    const { status, code, message, data } = await updateApproveService({
       ...req.params,
       ...req.body,
     });
@@ -45,8 +45,19 @@ exports.addProduct = async (req, res) => {
   
 
   // get all Products
-  exports.getProducts = async (req, res) => {
-    const { status, code, message, data } = await getProductsService({
+  exports.getAdminPost = async (req, res) => {
+    const { status, code, message, data } = await getUnApprovedService({
+      ...req.query,
+    });
+    if (data.products) {
+      return res.status(code).json({ code, status, message, data });
+    }
+    res.status(code).json({ code, status, message });
+  };
+
+  // get all Products
+  exports.getPosts = async (req, res) => {
+    const { status, code, message, data } = await getApprovedService({
       ...req.query,
     });
     if (data.products) {

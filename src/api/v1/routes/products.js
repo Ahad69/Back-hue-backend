@@ -1,25 +1,37 @@
-const router = require('express').Router();
+const router = require("express").Router();
 
+const verifyAdmin = require("../middleware/adminCheck");
+const verifyToken = require("../middleware/checkLogin");
+const {
+  addProduct,
+  getProducts,
+  searchProduct,
+  getProduct,
+  deleteProduct,
+  updateProduct,
+  updatePremium,
+  getPosterPost,
+  getAdminPost,
+  getPosts,
+  updateApprove,
+} = require("../product/controller");
 
-const verifyToken = require('../middleware/checkLogin');
-const { addProduct , getProducts , searchProduct , getProduct , deleteProduct , updateProduct , updatePremium, getPosterPost} = require('../product/controller');
+router.post("/", verifyToken, addProduct);
 
+router.patch("/:id", updateProduct);
 
+router.get("/admin", verifyAdmin, getAdminPost);
 
+router.patch("/approved/:id", verifyAdmin, updateApprove);
 
-router.post('/' ,  addProduct)
+router.get("/", getPosts);
 
-router.patch( '/:id' , updateProduct );
-router.patch( '/premium/:id' , updatePremium );
+router.delete("/:id", deleteProduct);
 
-router.get('/' ,  getProducts)
+router.get("/search", searchProduct);
 
-router.delete('/:id' ,  deleteProduct)
+router.get("/:id", getProduct);
 
-router.get('/search' ,    searchProduct)
-
-router.get('/:id',  getProduct)
-
-router.get('/posterid/:id', verifyToken,  getPosterPost)
+router.get("/posterid/:id", verifyToken, getPosterPost);
 
 module.exports = router;

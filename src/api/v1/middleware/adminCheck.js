@@ -1,7 +1,7 @@
 
 const jwt = require("jsonwebtoken");
 
-function verifyToken(req , res , next){
+function verifyAdmin(req , res , next){
     try {
         const authHeader = req.headers.authorization;
         if(!authHeader){
@@ -13,11 +13,11 @@ function verifyToken(req , res , next){
           if(err){
             return res.status(403).json({message : 'Forbidden'})
           }
-          
-          else{
+          if(decoded.role == "superAdmin"){
             req.decoded = decoded;
             next()
           }
+          
         })
       
     } catch (error) {
@@ -27,4 +27,4 @@ function verifyToken(req , res , next){
 
   }
 
-module.exports = verifyToken
+module.exports = verifyAdmin

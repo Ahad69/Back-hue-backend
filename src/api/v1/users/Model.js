@@ -11,6 +11,7 @@ const userSchema = Schema({
     required: true,
   },
   avater: {type : String , default : "avater"},
+  role: {type : String , default : "user"},
   address: {
     country:  { type: String , default : undefined },  
     regionName:  { type: String , default : undefined },  
