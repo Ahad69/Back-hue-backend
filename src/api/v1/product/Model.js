@@ -9,6 +9,7 @@ const productSchema = Schema({
   subCategory : { type: String },
   description: { type: String },
   city: { type: String },
+  month : {type : String},
   age: { type: String },
   cities: { type: Array },
   isApproved : { type : Boolean , default: false },

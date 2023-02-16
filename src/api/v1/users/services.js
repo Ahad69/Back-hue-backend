@@ -2,9 +2,16 @@ const { User } = require("../models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const generateJwtToken = ({ _id, firstName, lastName, avater , email , role}) => {
+const generateJwtToken = ({
+  _id,
+  firstName,
+  lastName,
+  avater,
+  email,
+  role,
+}) => {
   return jwt.sign(
-    { _id, firstName, lastName, avater , email , role},
+    { _id, firstName, lastName, avater, email, role },
     process.env.JWT_SECRET,
     {
       expiresIn: "1d",
@@ -30,7 +37,6 @@ exports.addUserService = async (req, res) => {
         avater,
         password: hashedPassword,
         address,
-
       });
 
       await newUser.save();
@@ -55,7 +61,6 @@ exports.signinUsers = async (req, res) => {
     }
 
     const isPasswordMatched = await bcrypt.compare(password, user.password);
-    
 
     if (isPasswordMatched) {
       const token = generateJwtToken({
@@ -64,7 +69,7 @@ exports.signinUsers = async (req, res) => {
         lastName: user.lastName,
         avater: user.avater,
         email: user.email,
-        role : user.role
+        role: user.role,
       });
 
       res.status(200).json({
@@ -76,16 +81,16 @@ exports.signinUsers = async (req, res) => {
       return res.status(422).json({
         Success: false,
         code: 422,
-        message: "Invalid password"  ,
+        message: "Invalid password",
       });
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(401).json({
       Success: false,
       code: 401,
       message: "Invalid Credential a",
-      error : error
+      error: error,
     });
   }
 };
@@ -117,8 +122,6 @@ exports.getUsersService = async (req, res) => {
     });
 };
 
-
-
 // update Users
 exports.updateUserAddressService = async ({
   id,
@@ -134,12 +137,7 @@ exports.updateUserAddressService = async ({
     data: {},
   };
 
-  console.log(  
-    id,
-    city,
-    zipCode,
-    regionName,
-    country,)
+  console.log(id, city, zipCode, regionName, country);
   try {
     const user = await User.findOne({
       _id: id,
@@ -214,9 +212,8 @@ exports.updateUserService = async ({
   }
 };
 
-
 // update Users
-exports.updatePremiumService = async ({ id, isDelete }) => {
+exports.updatePassordService = async ({ id, password , oldPassword}) => {
   const response = {
     code: 200,
     status: "success",
@@ -225,27 +222,35 @@ exports.updatePremiumService = async ({ id, isDelete }) => {
   };
 
   try {
-    const User = await User.findOne({
+    const user = await User.findOne({
       _id: id,
     }).exec();
-    if (!User) {
+    if (!user) {
       response.code = 422;
       response.status = "failed";
       response.message = "No User data found";
       return response;
     }
 
-    console.log(User);
+    const isPasswordMatched = await bcrypt.compare(oldPassword, user.password);
 
-    User.isDelete = isDelete ? isDelete : User.isDelete;
+    if(isPasswordMatched){
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user.password = hashedPassword ? hashedPassword : user.password;
+  
+      await user.save();
+  
+      response.data.user = user;
+  
+      return response;
+    }else{
 
-    console.log(User);
-
-    await User.save();
-
-    response.data.User = User;
-
-    return response;
+      response.code = 422;
+      response.status = "failed";
+      response.message = "Old pass is wrong";
+      return response;
+    }
+ 
   } catch (error) {
     response.code = 500;
     response.status = "failed";
@@ -253,6 +258,8 @@ exports.updatePremiumService = async ({ id, isDelete }) => {
     return response;
   }
 };
+
+
 
 // delete Users
 exports.deleteUserService = async ({ id }) => {

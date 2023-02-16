@@ -1,4 +1,4 @@
-const {  addUserService , getUsersService  , searchUserService , getUserService , deleteUserService , updateUserService, updatePremiumService, updateUserAddressService } = require("./services")
+const {  addUserService , getUsersService  , searchUserService , getUserService , deleteUserService , updateUserService, updatePremiumService, updateUserAddressService, updatePassordService } = require("./services")
 
 // add Users
 exports.addUser = async (req, res) => {
@@ -38,8 +38,8 @@ exports.addUser = async (req, res) => {
 
 
   // update Users
-  exports.updatePremium = async (req, res) => {
-    const { status, code, message, data } = await updatePremiumService({
+  exports.updatePassword = async (req, res) => {
+    const { status, code, message, data } = await updatePassordService({
       ...req.params,
       ...req.body,
     });

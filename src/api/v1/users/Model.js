@@ -10,6 +10,7 @@ const userSchema = Schema({
     type: String,
     required: true,
   },
+  month : {type : String},
   avater: {type : String , default : "avater"},
   role: {type : String , default : "user"},
   address: {
