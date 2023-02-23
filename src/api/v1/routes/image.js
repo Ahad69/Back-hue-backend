@@ -22,8 +22,6 @@ router.post('/upload-file', (req, res) => {
         }
         const fileRaw = fs.createReadStream(files.images.filepath);
 
-
-
         imagekit.upload({
             file: fileRaw, //required
             fileName: files.images.originalFilename,   //required
@@ -37,7 +35,7 @@ router.post('/upload-file', (req, res) => {
         }).then(response => {
             res.status(200).json({ message: 'FIle has been uploaded', payload: response });
         }).catch(error => {
-       
+			console.log(error)
             res.status(500).json({ message: 'Error in uploading file' });
         });
     });
