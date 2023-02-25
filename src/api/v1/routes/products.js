@@ -14,6 +14,7 @@ const {
   getAdminPost,
   getPosts,
   updateApprove,
+  getQuery,
 } = require("../product/controller");
 
 router.post("/", verifyToken, addProduct);
@@ -25,6 +26,8 @@ router.get("/admin", verifyAdmin, getAdminPost);
 router.patch("/approved/:id", verifyAdmin, updateApprove);
 
 router.get("/", getPosts);
+
+router.get("/query", getQuery);
 
 router.delete("/:id", deleteProduct);
 

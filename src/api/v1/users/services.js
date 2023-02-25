@@ -20,7 +20,7 @@ const generateJwtToken = ({
 };
 
 exports.addUserService = async (req, res) => {
-  const { firstName, lastName, email, address, password, avater } = req.body;
+  const { firstName, lastName, email, address, password, avater , month } = req.body;
   try {
     User.findOne({ email: email }).exec(async (error, user) => {
       if (user)
@@ -34,6 +34,7 @@ exports.addUserService = async (req, res) => {
         firstName,
         lastName,
         email,
+		month,
         avater,
         password: hashedPassword,
         address,

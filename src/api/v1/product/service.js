@@ -236,6 +236,49 @@ exports.getApprovedService = async ({}) => {
   }
 };
 
+
+// get all products
+exports.getQueryService = async ({q}) => {
+  
+  const response = {
+    code: 200,
+    status: "success",
+    message: "Fetch product list successfully",
+    data: {},
+  };
+
+  try {
+  let query = { isApproved : true };
+  if (q !== "undefined" || q !== undefined || q) {
+    let regex = new RegExp(q, "i");
+
+    query = {
+      ...query,
+      $or: [{ name: regex } , { category : regex} , {email :regex}  ],
+    };
+  }
+ 
+    const products = await Product.find(query).sort({ _id: -1 });
+
+    if (products.length === 0) {
+      response.code = 404;
+      response.status = "failded";
+      response.message = "No product data found";
+      return response;
+    }
+
+    response.data = { products}
+
+    return response;
+  } catch (error) {
+    console.log(error)
+    response.code = 500;
+    response.status = "failed";
+    response.message = "Error. Try again 2";
+    return response;
+  }
+};
+
 // get Products by search
 exports.searchProductService = async ({ q }) => {
   const response = {

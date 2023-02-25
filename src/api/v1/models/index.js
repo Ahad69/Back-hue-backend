@@ -5,6 +5,9 @@ const Category = require("../category/Model")
 const User = require("../users/Model")
 const Links = require("../links/Model")
 const Blogs = require("../Blogs/Model")
+const Reports = require("../reports/Model")
+const Abouts = require("../aboutus/Model")
+const Contact = require("../contactus/Model")
 
 module.exports = {
   Product,
@@ -12,5 +15,8 @@ module.exports = {
   Category,
   User,
   Links,
-  Blogs
+  Blogs,
+  Reports,
+  Abouts,
+  Contact
 };
