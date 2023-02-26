@@ -70,7 +70,7 @@ exports.updateProductService = async ({
   }
 };
 
-// update Products
+// update Product
 exports.updateApproveService = async ({ id, isApproved }) => {
   const response = {
     code: 200,
@@ -79,7 +79,7 @@ exports.updateApproveService = async ({ id, isApproved }) => {
     data: {},
   };
 
-  console.log(isApproved)
+  console.log(isApproved);
   try {
     const product = await Product.findOne({
       _id: id,
@@ -90,12 +90,11 @@ exports.updateApproveService = async ({ id, isApproved }) => {
       response.message = "No Product data found";
       return response;
     }
-    if(isApproved == false){
-      product.isApproved = false
+    if (isApproved == false) {
+      product.isApproved = false;
       await product.save();
       response.data.product = product;
       return response;
-
     }
     product.isApproved = isApproved ? isApproved : product.isApproved;
 
@@ -108,6 +107,35 @@ exports.updateApproveService = async ({ id, isApproved }) => {
     response.message = "Error. Try again";
     return response;
   }
+};
+
+exports.updateApproveMany = async (req, res) => {
+  const response = {
+    code: 200,
+    status: "success",
+    message: "Product updated successfully",
+    data: {},
+  };
+
+
+const {ids} = req.body
+
+  try {
+    const sections = await Product.updateMany(
+      ids.map((item) => {
+        return { _id: item._id }, { $set: { isApproved : true } };
+      })
+    );
+
+    res.status(200).json({ status: "success",
+    message: "Product updated successfully",});
+
+  } catch (e) {
+    console.log(e)
+    res.status(500).json({ message: "Something went wrong in /edit-order" });
+  }
+
+
 };
 
 // delete Products
@@ -232,49 +260,6 @@ exports.getApprovedService = async ({}) => {
     response.code = 500;
     response.status = "failed";
     response.message = "Error. Try again a";
-    return response;
-  }
-};
-
-
-// get all products
-exports.getQueryService = async ({q}) => {
-  
-  const response = {
-    code: 200,
-    status: "success",
-    message: "Fetch product list successfully",
-    data: {},
-  };
-
-  try {
-  let query = { isApproved : true };
-  if (q !== "undefined" || q !== undefined || q) {
-    let regex = new RegExp(q, "i");
-
-    query = {
-      ...query,
-      $or: [{ name: regex } , { category : regex} , {email :regex}  ],
-    };
-  }
- 
-    const products = await Product.find(query).sort({ _id: -1 });
-
-    if (products.length === 0) {
-      response.code = 404;
-      response.status = "failded";
-      response.message = "No product data found";
-      return response;
-    }
-
-    response.data = { products}
-
-    return response;
-  } catch (error) {
-    console.log(error)
-    response.code = 500;
-    response.status = "failed";
-    response.message = "Error. Try again 2";
     return response;
   }
 };
