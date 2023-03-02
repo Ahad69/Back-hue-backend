@@ -20,7 +20,7 @@ exports.addBlogServices = async ({ body }) => {
   }
 };
 
-exports.getBlogsServices = async ({}) => {
+exports.getBlogsServices = async ({q}) => {
   const response = {
     code: 200,
     status: "success",
@@ -29,7 +29,19 @@ exports.getBlogsServices = async ({}) => {
   };
 
   try {
-    const blogs = await Blogs.aggregate([{ $sort: { _id: -1 } }]);
+
+    let query = { isDelete: false };
+    if (q !== "undefined" || q !== undefined || q) {
+      let regex = new RegExp(q, "i");
+  
+      query = {
+        ...query,
+        $or: [{ writer : regex  } , { title : regex} ],
+      };
+    }
+
+
+    const blogs = await Blogs.find(query).sort({ _id: -1 });
 
     if (blogs.length === 0) {
       response.code = 404;

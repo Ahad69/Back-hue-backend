@@ -16,7 +16,7 @@ const {
   updateApprove,
   updateManyById,
 } = require("../product/controller");
-const { updateApproveMany } = require("../product/service");
+const { updateApproveMany, deleteMany } = require("../product/service");
 
 router.post("/", verifyToken, addProduct);
 
@@ -27,6 +27,8 @@ router.get("/admin", verifyAdmin, getAdminPost);
 router.patch("/approved/:id", verifyAdmin, updateApprove);
 
 router.post("/many", updateApproveMany);
+
+router.post("/deleteMany",  deleteMany);
 
 router.get("/", getPosts);
 

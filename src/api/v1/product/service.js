@@ -117,25 +117,57 @@ exports.updateApproveMany = async (req, res) => {
     data: {},
   };
 
+  const { data } = req.body;
 
-const {ids} = req.body
+  console.log(data);
 
   try {
-    const sections = await Product.updateMany(
-      ids.map((item) => {
-        return { _id: item._id }, { $set: { isApproved : true } };
-      })
-    );
-
-    res.status(200).json({ status: "success",
-    message: "Product updated successfully",});
-
+    data.map((a) => {
+      const f = Product.findByIdAndUpdate(
+        a,
+        { $set: { isApproved: true } },
+        function (err, docs) {
+        console.log(err)
+        }
+      );
+    });
+    res
+      .status(200)
+      .json({ status: "success", message: "Post updated successfully" });
   } catch (e) {
-    console.log(e)
+    console.log(e);
     res.status(500).json({ message: "Something went wrong in /edit-order" });
   }
+};
 
+exports.deleteMany = async (req, res) => {
+  const ids = req.body;
 
+  console.log(ids);
+
+  try {
+    await Product.deleteMany(
+      {
+        _id: {
+          $in: ids,
+        },
+      },
+      function (err, result) {
+        if (err) {
+          res.json(err);
+        } else {
+          res.json(result);
+        }
+      }
+    );
+
+    res
+      .status(200)
+      .json({ status: "success", message: "Deleted successfully" });
+  } catch (e) {
+    console.log(e);
+    // res.status(500).json({ message: "Something went wrong in /edit-order" });
+  }
 };
 
 // delete Products
