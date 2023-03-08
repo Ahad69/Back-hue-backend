@@ -79,7 +79,7 @@ exports.updateApproveService = async ({ id, isApproved }) => {
     data: {},
   };
 
-  console.log(isApproved);
+
   try {
     const product = await Product.findOne({
       _id: id,

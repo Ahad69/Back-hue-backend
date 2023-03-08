@@ -13,8 +13,10 @@ const productSchema = Schema({
   age: { type: String },
   cities: { type: Array },
   isApproved : { type : Boolean , default: false },
-  imgF: {type : String},
-  imgS: {type : String},
+  imgOne: {type : String},
+  imgTwo: {type : String},
+  imgThree: {type : String},
+  imgFour: {type : String},
   posterId : {type: mongoose.Schema.Types.ObjectId},
   isDelete : { type : Boolean , default: false },
   isPremium : { type : Boolean }
