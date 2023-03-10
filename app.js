@@ -4,6 +4,8 @@ const csrf = require('csurf');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const { readdirSync } = require('fs');
+const bodyParser = require('body-parser');
+
 
 const csrfProtection = csrf({ cookie: true });
 
@@ -11,6 +13,11 @@ const app = express();
 require('./src/api/v1/config').dbConnection();
 
 app.use(express.json());
+app.use(express.raw({
+  inflate: true,
+  limit: '100kb',
+  type: 'application/json'
+}));
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 
