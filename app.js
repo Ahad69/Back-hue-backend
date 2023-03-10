@@ -12,26 +12,11 @@ const csrfProtection = csrf({ cookie: true });
 const app = express();
 require('./src/api/v1/config').dbConnection();
 
-app.use(function(req, res, next) {
-  var contentType = req.headers['content-type'] || ''
-    , mime = contentType.split(';')[0];
-
-  if (mime != 'application.json') {
-    return next();
+app.use(express.json({
+  verify: (req, res, buf) => {
+    req.rawBody = buf
   }
-
-  var data = '';
-  req.setEncoding('utf8');
-  req.on('data', function(chunk) {
-    data += chunk;
-  });
-  req.on('end', function() {
-    req.rawBody = data;
-    next();
-  });
-});
-
-app.use(express.json());
+}));
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 
