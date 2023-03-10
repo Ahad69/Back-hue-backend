@@ -363,3 +363,16 @@ exports.getUserService = async ({ id }) => {
     return response;
   }
 };
+
+
+
+exports.increaseUserCredit = async (id, amount) => {
+  console.log(id, amount);
+  const user = await User.findOne({
+    _id: id,
+  }).exec();
+
+  user.credit = user.credit ? parseFloat(user.credit) + amount : amount;
+
+  await user.save();
+};
