@@ -9,23 +9,12 @@ router.post("/", async (req, res) => {
     const webhookSecret = process.env.COINBASE_WEBHOOK_SECRET;
     try {
         const event = Webhook.verifyEventBody(rawBody, signature, webhookSecret);
-        const user_id = event.data.metadata.user_id;
-        const amount = event.data.pricing.local.amount;
-        await increaseUserCredit(user_id, amount)
-            console.log('incremented of '+user_id)
 
-        if (event.type === 'charge:pending') {
-            // TODO
-            // user paid, but transaction not confirm on blockchain yet
-        }
 
         if (event.type === 'charge:confirmed') {
-            increaseUserCredit(user_id, event.data.local_price.amount)
-        }
-
-        if (event.type === 'charge:failed') {
-            // TODO
-            // charge failed or expired
+            const user_id = event.data.metadata.user_id;
+            const amount = event.data.pricing.local.amount;
+            await increaseUserCredit(user_id, amount)
         }
 
         res.send(`success ${event.id}`);
