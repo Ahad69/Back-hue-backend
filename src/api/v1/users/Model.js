@@ -20,6 +20,7 @@ const userSchema = Schema({
     city:  { type: String , default : undefined }, 
   },
   isDelete : { type : Boolean , default: false },
+  credit: { type: Number, default: 0 }
 },
 { timestamps: true }
 );

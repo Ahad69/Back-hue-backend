@@ -371,6 +371,7 @@ exports.increaseUserCredit = async (id, amount) => {
   const user = await User.findOne({
     _id: id,
   }).exec();
+  console.log({ user })
 
   user.credit = user.credit ? parseFloat(user.credit) + amount : amount;
 

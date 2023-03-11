@@ -7,12 +7,12 @@ router.post("/", async (req, res) => {
     const rawBody = req.rawBody;
     const signature = req.headers['x-cc-webhook-signature'];
     const webhookSecret = process.env.COINBASE_WEBHOOK_SECRET;
-
     try {
         const event = Webhook.verifyEventBody(rawBody, signature, webhookSecret);
         const user_id = event.data.metadata.user_id;
-        console.log({ user_id, amount : event.data.local_price.amount })
-        await increaseUserCredit(user_id, event.data.local_price.amount)
+        const amount = event.data.pricing.local.amount;
+        await increaseUserCredit(user_id, amount)
+            console.log('incremented of '+user_id)
 
         if (event.type === 'charge:pending') {
             // TODO
