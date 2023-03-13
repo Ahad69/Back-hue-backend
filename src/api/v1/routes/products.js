@@ -15,6 +15,7 @@ const {
   getPosts,
   updateApprove,
   updateManyById,
+  getAllPost,
 } = require("../product/controller");
 const { updateApproveMany, deleteMany } = require("../product/service");
 
@@ -32,7 +33,7 @@ router.post("/deleteMany",  deleteMany);
 
 router.get("/", getPosts);
 
-
+router.get("/all", getAllPost);
 
 
 router.delete("/:id", deleteProduct);

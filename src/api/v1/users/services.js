@@ -82,7 +82,7 @@ exports.signinUsers = async (req, res) => {
       return res.status(422).json({
         Success: false,
         code: 422,
-        message: "Invalid password",
+        message: "Invalid Credential",
       });
     }
   } catch (error) {
@@ -90,7 +90,7 @@ exports.signinUsers = async (req, res) => {
     res.status(401).json({
       Success: false,
       code: 401,
-      message: "Invalid Credential a",
+      message: "Invalid Credential",
       error: error,
     });
   }

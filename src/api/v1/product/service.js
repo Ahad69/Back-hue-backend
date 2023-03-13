@@ -79,7 +79,6 @@ exports.updateApproveService = async ({ id, isApproved }) => {
     data: {},
   };
 
-
   try {
     const product = await Product.findOne({
       _id: id,
@@ -127,7 +126,7 @@ exports.updateApproveMany = async (req, res) => {
         a,
         { $set: { isApproved: true } },
         function (err, docs) {
-        console.log(err)
+          console.log(err);
         }
       );
     });
@@ -284,6 +283,66 @@ exports.getApprovedService = async ({}) => {
 
     response.data = {
       products,
+    };
+
+    return response;
+  } catch (error) {
+    console.log(error);
+    response.code = 500;
+    response.status = "failed";
+    response.message = "Error. Try again a";
+    return response;
+  }
+};
+
+exports.getAllPosts = async ({ page, category }) => {
+  const response = {
+    code: 200,
+    status: "success",
+    message: "Fetch Product list successfully",
+    data: {},
+  };
+
+  try {
+    const pageNumber = page ? parseInt(page) : 1;
+    const limit = 50;
+    const totalDocs = await Product.countDocuments({});
+    const totalPage = Math.ceil(totalDocs / limit);
+
+    const products = await Product.aggregate([
+      {
+        $match: {
+          isApproved: true,
+        },
+      },
+      {
+        $match: {
+          subCategory: category,
+        },
+      },
+ 
+      {
+        $lookup: {
+          from: "users",
+          localField: "posterId",
+          foreignField: "_id",
+          as: "owner",
+        },
+      },
+      { $skip: (pageNumber - 1) * limit },
+      { $limit: limit },
+      { $sort: { isPremium: -1, _id: -1 } },
+    ]);
+
+    if (products.length === 0) {
+      response.code = 404;
+      response.status = "failded";
+      response.message = "No Product data found";
+      return response;
+    }
+
+    response.data = {
+      products
     };
 
     return response;

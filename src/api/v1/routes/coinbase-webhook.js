@@ -1,5 +1,5 @@
 const express = require("express");
-const { Webhook } = require('coinbase-commerce-node');
+const { Webhook } = require("coinbase-commerce-node");
 const { increaseUserCredit } = require("../users/services");
 const router = express.Router();
 
