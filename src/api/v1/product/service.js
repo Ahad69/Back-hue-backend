@@ -258,7 +258,6 @@ exports.getApprovedService = async ({}) => {
 
   try {
     const products = await Product.aggregate([
-      { $sort: { isPremium: -1, _id: -1 } },
       {
         $match: {
           isApproved: true,
@@ -272,6 +271,9 @@ exports.getApprovedService = async ({}) => {
           as: "owner",
         },
       },
+	  { $sort: { _id: -1 } },
+	  { $sort: { isPremium: -1 } }
+	   
     ]);
 
     if (products.length === 0) {
