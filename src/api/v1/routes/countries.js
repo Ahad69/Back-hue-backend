@@ -1,8 +1,8 @@
 const router = require('express').Router();
 
 
-const { addMedia , getMedias , searchMedia , getMedia , deleteMedia , updateMedia} = require('../countries/controller');
-const { getMediasService, addCountryService } = require('../countries/service');
+const { addMedia , getMedias , searchMedia , getMedia , deleteMedia , updateMedia, getSearch} = require('../countries/controller');
+const { getMediasService, addCountryService , getSearchService } = require('../countries/service');
 
 
 router.post('/' ,  addCountryService)
@@ -13,7 +13,7 @@ router.get('/' ,  getMediasService)
 
 router.delete('/:id' ,  deleteMedia)
 
-router.get('/search' ,    searchMedia)
+router.get('/search' ,    getSearchService)
 
 router.get('/:id',  getMedia)
 

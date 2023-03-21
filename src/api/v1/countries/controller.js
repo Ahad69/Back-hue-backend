@@ -1,4 +1,4 @@
-const {  addMediaService , getMediasService  , searchMediaService , getMediaService , deleteMediaService , updateMediaService } = require("./service")
+const {  addMediaService , getMediasService  , searchMediaService , getMediaService , deleteMediaService , updateMediaService, getSearchService } = require("./service")
 
 // add Medias
 exports.addMedia = async (req, res) => {
@@ -35,9 +35,23 @@ exports.addMedia = async (req, res) => {
 
   // get all Medias
   exports.getMedias = async (req, res) => {
+    
     const { status, code, message, data } = await getMediasService({
       ...req.query,
     });
+    if (data) {
+      return res.status(code).json({ code, status, message, data });
+    }
+    res.status(code).json({ code, status, message });
+  };
+
+  // get all Medias
+  exports.getSearch = async (req, res) => {
+    console.log("Asdf" , req.query)
+    const { status, code, message, data } = await getSearchService({
+      ...req.query,
+    });
+
     if (data) {
       return res.status(code).json({ code, status, message, data });
     }

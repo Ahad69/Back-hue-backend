@@ -71,6 +71,54 @@ exports.getMediasService = async (req, res) => {
 
 
 
+// get all Medias
+exports.getSearchService = async (req , res) => {
+  const response = {
+    code: 200,
+    status: "success",
+    message: "Media Got successfully",
+    data : {}
+  };
+
+    const { q } = req.query;
+	
+
+
+  try {
+
+    let query = { isDelete: false };
+    if (q !== "undefined" || q !== undefined || q) {
+      let regex = new RegExp(q, "i");
+      query = {
+        ...query,
+        $or: [{ name: regex } ],
+      };
+    }
+
+    const country = await Country.find(query)
+    .populate("parentId")
+      .select("-__v -isDelete")
+      .sort({ _id: -1 });
+
+    if (country.length === 0) {
+      response.code = 404;
+      response.status = "failed";
+      response.message = "No User data found";
+	  return 
+    }
+	
+    res.status(200).json( country);
+  } catch (error) {
+    response.code = 500;
+    response.status = "failed";
+    response.message = "Error. Try again sdf";
+    console.log(error)
+    return response;
+  }
+};
+
+
+
 // add Medias
 exports.addCountryService = async (req, res) => {
   const categoryObj = {
