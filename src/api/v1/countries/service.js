@@ -96,7 +96,7 @@ exports.getSearchService = async (req , res) => {
     }
 
     const country = await Country.find(query)
-    .populate("parentId")
+       .populate("parentId")
       .select("-__v -isDelete")
       .sort({ _id: -1 });
 
