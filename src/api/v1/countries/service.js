@@ -101,7 +101,7 @@ exports.getSearchService = async (req , res) => {
       .sort({ _id: -1 });
 
     if (country.length === 0) {
-       res.status(404).json({code : 404 , message : "no city found"});
+      res.status(404).json({message : "Not found any city" , code : 404});
 	  return 
     }
 	
