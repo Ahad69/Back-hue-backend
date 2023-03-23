@@ -34,7 +34,7 @@ exports.getTransactionsServices = async ({ q }) => {
       let regex = new RegExp(q, "i");
       query = {
         ...query,
-        $or: [{ email: regex }, { date: regex }],
+        $or: [{ email: regex }, { date: regex } ,  { invoice: regex }],
       };
     }
 
