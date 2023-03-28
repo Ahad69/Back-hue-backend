@@ -5,9 +5,9 @@ const formidable = require('formidable');
 const ImageKit = require("imagekit");
 const fs = require('fs');
 const imagekit = new ImageKit({
-    publicKey: "public_FdpegrOvDmQs6ycXyb5YQ/Bbz14=",
-    privateKey: "private_einotyBg2Npd6mvhnPJApVmT4Qg=",
-    urlEndpoint: "https://ik.imagekit.io/dlyqigh4b/"
+    publicKey: "public_iuZSTU4J+kcli1ecBOxK1xnbkXk=",
+    privateKey: "private_Wmxj+v72RSQZsYBeUT+/qHOq66c=",
+    urlEndpoint: "https://ik.imagekit.io/6p4lsoibt/"
 });
 
 
