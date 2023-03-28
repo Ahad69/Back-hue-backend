@@ -20,7 +20,7 @@ exports.addBlogServices = async ({ body }) => {
   }
 };
 
-exports.getBlogsServices = async ({q}) => {
+exports.getBlogsServices = async ({ q }) => {
   const response = {
     code: 200,
     status: "success",
@@ -29,17 +29,15 @@ exports.getBlogsServices = async ({q}) => {
   };
 
   try {
-
     let query = { isDelete: false };
     if (q !== "undefined" || q !== undefined || q) {
       let regex = new RegExp(q, "i");
-  
+
       query = {
         ...query,
-        $or: [{ writer : regex  } , { title : regex} ],
+        $or: [{ writer: regex }, { title: regex }],
       };
     }
-
 
     const blogs = await Blogs.find(query).sort({ _id: -1 });
 
@@ -113,31 +111,123 @@ exports.updateBlogServices = async ({
 };
 
 exports.deleteBlogServices = async ({ id }) => {
-    const response = {
-      code: 200,
-      status: "success",
-      message: "Delete Product successfully",
-    };
-  
-    try {
-      const blog = await Blogs.findOne({
-        _id: id,
-        isDelete: false,
-      });
-      if (!blog) {
-        response.code = 404;
-        response.status = "failed";
-        response.message = "No Product data found";
-        return response;
-      }
-  
-      await blog.remove();
-  
-      return response;
-    } catch (error) {
-      response.code = 500;
+  const response = {
+    code: 200,
+    status: "success",
+    message: "Delete Product successfully",
+  };
+
+  try {
+    const blog = await Blogs.findOne({
+      _id: id,
+      isDelete: false,
+    });
+    if (!blog) {
+      response.code = 404;
       response.status = "failed";
-      response.message = "Error. Try again";
+      response.message = "No Product data found";
       return response;
     }
+
+    await blog.remove();
+
+    return response;
+  } catch (error) {
+    response.code = 500;
+    response.status = "failed";
+    response.message = "Error. Try again";
+    return response;
+  }
+};
+
+exports.deleteMany = async (req, res) => {
+  const ids = req.body;
+
+  console.log(ids);
+
+  try {
+    await Blogs.deleteMany(
+      {
+        _id: {
+          $in: ids,
+        },
+      },
+      function (err, result) {
+        if (err) {
+          res.json(err);
+        } else {
+          res.json(result);
+        }
+      }
+    );
+
+    res
+      .status(200)
+      .json({ status: "success", message: "Deleted successfully" });
+  } catch (e) {
+    console.log(e);
+    // res.status(500).json({ message: "Something went wrong in /edit-order" });
+  }
+};
+
+exports.updatePauseMany = async (req, res) => {
+  const response = {
+    code: 200,
+    status: "success",
+    message: "Product updated successfully",
+    data: {},
   };
+
+  const { data } = req.body;
+
+
+
+  try {
+    data.map((a) => {
+      const f = Blogs.findByIdAndUpdate(
+        a,
+        { $set: { status: "paused" } },
+        function (err, docs) {
+          console.log(err);
+        }
+      );
+    });
+    res
+      .status(200)
+      .json({ status: "success", message: "Post updated successfully" });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ message: "Something went wrong in /edit-order" });
+  }
+};
+
+exports.updatePablishMany = async (req, res) => {
+  const response = {
+    code: 200,
+    status: "success",
+    message: "Product updated successfully",
+    data: {},
+  };
+
+  const { data } = req.body;
+
+
+
+  try {
+    data.map((a) => {
+      const f = Blogs.findByIdAndUpdate(
+        a,
+        { $set: { status: "published" } },
+        function (err, docs) {
+          console.log(err);
+        }
+      );
+    });
+    res
+      .status(200)
+      .json({ status: "success", message: "Post updated successfully" });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({ message: "Something went wrong in /edit-order" });
+  }
+};
