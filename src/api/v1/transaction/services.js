@@ -43,12 +43,13 @@ exports.getTransactionsServices = async ({ q }) => {
       .select("-__v -isDelete")
       .sort({ _id: -1 });
 
-    if (response.data.transactions.length === 0) {
+    if (response.data.transactions.length == 0) {
       response.code = 404;
       response.status = "failed";
       response.message = "No User data found";
+	return response
     }
-
+	
     return response;
   } catch (error) {
     console.log(error);

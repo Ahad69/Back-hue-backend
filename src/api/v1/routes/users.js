@@ -1,5 +1,5 @@
 const express = require("express");
-const { addUser, getUser, getUsers , updateUser , deleteUser , updateUserAddress, updatePassword, updateCredit  } = require("../users/controller");
+const { addUser, getUser, getUsers , updateUser , deleteUser , updateUserAddress, updatePassword, updateCredit   } = require("../users/controller");
 const { addUserService , getUsersService , signinUsers } = require("../users/services");
 const verifyToken = require("../middleware/checkLogin");
 const verifyAdmin = require("../middleware/adminCheck");

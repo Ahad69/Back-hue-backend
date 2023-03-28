@@ -1,4 +1,4 @@
-const {  addProductService , getProductsService  , searchProductService , getProductService , deleteProductService , updateProductService, updateApproveService, getOnlyUserPosts, getUnApprovedService, getApprovedService, updateMany, updateApprove, getAllPosts } = require("./service")
+const {  addProductService , getProductsService  , getAdminUserPosts, searchProductService , getProductService , deleteProductService , updateProductService, updateApproveService, getOnlyUserPosts, getUnApprovedService, getApprovedService, updateMany, updateApprove, getAllPosts } = require("./service")
 
 // add Products
 exports.addProduct = async (req, res) => {
@@ -107,6 +107,17 @@ exports.addProduct = async (req, res) => {
   // get one Products
   exports.getPosterPost = async (req, res) => {
     const { status, code, message, data } = await getOnlyUserPosts({
+      ...req.params,
+    });
+    if (data.product) {
+      return res.status(code).json({ code, status, message, data });
+    }
+    res.status(code).json({ code, status, message });
+  };
+  
+    // get one Products
+  exports.getAdminPosterPost = async (req, res) => {
+    const { status, code, message, data } = await getAdminUserPosts({
       ...req.params,
     });
     if (data.product) {

@@ -72,6 +72,7 @@ exports.updateBlogServices = async ({
   desc,
   image,
   writer,
+  status,
 }) => {
   const response = {
     code: 200,
@@ -96,6 +97,7 @@ exports.updateBlogServices = async ({
     blog.desc = desc ? desc : blog.desc;
     blog.image = image ? image : blog.image;
     blog.writer = writer ? writer : blog.writer;
+    blog.status = status ? status : blog.status;
 
     await blog.save();
 

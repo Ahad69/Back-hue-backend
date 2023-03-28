@@ -16,6 +16,7 @@ const {
   updateApprove,
   updateManyById,
   getAllPost,
+  getAdminPosterPost,
 } = require("../product/controller");
 const { updateApproveMany, deleteMany } = require("../product/service");
 
@@ -43,5 +44,6 @@ router.get("/search", searchProduct);
 router.get("/:id", getProduct);
 
 router.get("/posterid/:id", verifyToken, getPosterPost);
+router.get("/admin-user/:id", getAdminPosterPost);
 
 module.exports = router;
