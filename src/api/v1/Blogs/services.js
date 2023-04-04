@@ -71,6 +71,7 @@ exports.updateBlogServices = async ({
   image,
   writer,
   status,
+  permalink
 }) => {
   const response = {
     code: 200,
@@ -91,6 +92,7 @@ exports.updateBlogServices = async ({
     }
 
     blog.title = title ? title : blog.title;
+    blog.permalink = permalink ? permalink : blog.permalink;
     blog.category = category ? category : blog.category;
     blog.desc = desc ? desc : blog.desc;
     blog.image = image ? image : blog.image;

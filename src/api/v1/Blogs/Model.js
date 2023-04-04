@@ -3,6 +3,7 @@ const { Schema, model } = require("mongoose");
 const blogSchema = Schema(
   {
     title: { type: String, trim: true },
+    permalink: { type: String, trim: true },
     category: { type: String, trim: true },
     desc : { type: String },
     status : { type: String,  default: "published" },
