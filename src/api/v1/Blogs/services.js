@@ -35,7 +35,7 @@ exports.getBlogsServices = async ({ q }) => {
 
       query = {
         ...query,
-        $or: [{ writer: regex }, { title: regex }],
+        $or: [{ writer: regex }, { title: regex } , { permalink : regex }],
       };
     }
 
@@ -61,6 +61,9 @@ exports.getBlogsServices = async ({ q }) => {
     return response;
   }
 };
+
+
+
 
 // update blogs
 exports.updateBlogServices = async ({
