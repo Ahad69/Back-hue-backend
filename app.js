@@ -15,10 +15,12 @@ require('./src/api/v1/config').dbConnection();
 app.use(express.json({
   verify: (req, res, buf) => {
     req.rawBody = buf
-  }
+  },
+  limit : "5mb"
 }));
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false , limit: '5mb'}));
 app.use(cors());
+// app.use(express.json())
 
 app.use(cookieParser());
 app.use(morgan('dev'));
