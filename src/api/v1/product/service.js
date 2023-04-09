@@ -26,9 +26,18 @@ exports.updateProductService = async ({
   id,
   name,
   category,
+  subCategory,
   description,
   city,
   cities,
+  email,
+  phone,
+  imgOne,
+  imgTwo,
+  imgThree,
+  imgFour,
+  age,
+  link,
   isDelete,
 }) => {
   const response = {
@@ -37,6 +46,8 @@ exports.updateProductService = async ({
     message: "Product updated successfully",
     data: {},
   };
+
+
 
   try {
     const product = await Product.findOne({
@@ -49,19 +60,31 @@ exports.updateProductService = async ({
       return response;
     }
 
+
     product.name = name ? name : product.name;
+    product.link = link ? link : product.link;
+    product.age = age ? age : product.age;
     product.category = category ? category : product.category;
+    product.subCategory = subCategory ? subCategory : product.subCategory;
     product.description = description ? description : product.description;
     product.city = city ? city : product.city;
     product.cities = cities ? cities : product.cities;
+    product.email = email ? email : product.email;
+    product.phone = phone ? phone : product.phone;
+    product.imgOne = imgOne ? imgOne : product.imgOne;
+    product.imgTwo = imgTwo ? imgTwo : product.imgTwo;
+    product.imgThree = imgThree ? imgThree : product.imgThree;
+    product.imgFour = imgFour ? imgFour : product.imgFour;
+
+    console.log(product , "product");
 
     await product.save();
 
+
+
     response.data.product = product;
-
-    console.log(product);
-
     return response;
+
   } catch (error) {
     response.code = 500;
     response.status = "failed";

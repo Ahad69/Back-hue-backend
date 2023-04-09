@@ -70,6 +70,7 @@ exports.updateBlogServices = async ({
   id,
   title,
   category,
+  subCategory,
   desc,
   image,
   writer,
@@ -99,6 +100,7 @@ exports.updateBlogServices = async ({
     blog.title = title ? title : blog.title;
     blog.permalink = permalink ? permalink : blog.permalink;
     blog.category = category ? category : blog.category;
+    blog.subCategory = subCategory ? subCategory : blog.subCategory;
     blog.desc = desc ? desc : blog.desc;
     blog.image = image ? image : blog.image;
     blog.writer = writer ? writer : blog.writer;
