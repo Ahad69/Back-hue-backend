@@ -8,7 +8,7 @@ router.post("/", async (req, res) => {
 
     const rawBody = req.rawBody;
     const signature = req.headers['x-cc-webhook-signature'];
-    const webhookSecret = process.env.COINBASE_WEBHOOK_SECRET;
+    const webhookSecret = "27833e6c-4303-4757-adcc-ed286db46ec4";
     try {
         const event = Webhook.verifyEventBody(rawBody, signature, webhookSecret);
 
