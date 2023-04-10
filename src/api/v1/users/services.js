@@ -447,6 +447,6 @@ exports.increaseUserCredit = async (id, amount) => {
 
 //   user.credit = user.credit ? parseFloat(user.credit) + amount : amount;
 
-//   user.save().then(updatedTransactionStatus(id, isCompleted));
+//   user.save().then(()=>updatedTransactionStatus(id, isCompleted));
 
 // };
