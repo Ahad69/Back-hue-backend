@@ -16,9 +16,8 @@ router.post("/", async (req, res) => {
         if (event.type === 'charge:confirmed') {
             const user_id = event.data.metadata.user_id;
             const amount = event.data.pricing.local.amount;
-            const isCompleted = "done"
             await increaseUserCredit(user_id, parseFloat(amount))
-            await updatedTransactionStatus(user_id, isCompleted)
+          
         }
 
         res.send(`success ${event.id}`);

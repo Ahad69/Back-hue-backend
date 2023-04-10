@@ -15,9 +15,6 @@ router.post("/:id", async (req, res) => {
 
     const coinbaseApiKey = process.env.COINBASE_API_TOKEN;
 
-
-    console.log(coinbaseApiKey , "coinbaseApiKey")
-
     Client.init(coinbaseApiKey);
     const chargeData = {
         name: 'Recharge',

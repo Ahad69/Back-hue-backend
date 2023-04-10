@@ -126,7 +126,7 @@ exports.deleteTransactionServices = async ({ id }) => {
 };
 
 exports.updatedTransactionStatus = async (id, isCompleted) => {
-  console.log(id , isCompleted)
+ 
   const trans = await Transactions.findOne({
     _id: id,
   }).exec();

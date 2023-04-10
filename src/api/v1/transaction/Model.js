@@ -6,7 +6,7 @@ const transactionSchema = Schema(
     isCompleted : { type: String, default: "pending" },
     date : { type : String },
     invoice : { type: String, trim: true },
-    amount : {type: Number},
+    amount : {type: Number , default : 0},
     userId : {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
     email : {type: String , trim: true},
     isDelete: { type: Boolean, default: false },

@@ -1,6 +1,7 @@
 const { User } = require("../models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { updatedTransactionStatus } = require("../transaction/services");
 
 const generateJwtToken = ({
   _id,
@@ -431,5 +432,21 @@ exports.increaseUserCredit = async (id, amount) => {
 
   user.credit = user.credit ? parseFloat(user.credit) + amount : amount;
 
+
   await user.save();
+
 };
+
+// exports.increaseUserCredit = async (id, amount) => {
+//   const user = await User.findOne({
+//     _id: id,
+//   }).exec();
+
+
+//   const isCompleted = "done"
+
+//   user.credit = user.credit ? parseFloat(user.credit) + amount : amount;
+
+//   user.save().then(updatedTransactionStatus(id, isCompleted));
+
+// };
