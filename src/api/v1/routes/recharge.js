@@ -13,7 +13,11 @@ router.post("/:id", async (req, res) => {
         return res.status(422).json({ message: 'Amount must be greater than 0' })
     }
 
-    const coinbaseApiKey = process.env.COINBASE_API_KEY;
+    const coinbaseApiKey = process.env.COINBASE_API_TOKEN;
+
+
+    console.log(coinbaseApiKey , "coinbaseApiKey")
+
     Client.init(coinbaseApiKey);
     const chargeData = {
         name: 'Recharge',
