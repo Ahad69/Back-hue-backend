@@ -426,36 +426,17 @@ exports.getUserService = async ({ id }) => {
 
 
 
-// exports.increaseUserCredit = async (id, amount , invoice) => {
-//   const user = await User.findOne({
-//     _id: id,
-//   }).exec();
+exports.increaseUserCredit = async (id, amount , invoice) => {
+  const user = await User.findOne({
+    _id: id,
+  }).exec();
 
-//   user.credit = user.credit ? parseFloat(user.credit) + amount : amount;
-
-
-//   await user.save();
-
-// };
+  user.credit = user.credit ? parseFloat(user.credit) + amount : amount;
 
 
-// exports.increaseUserCredit = async (req, res) => {
+  await user.save();
 
-// const amount = req.body.amount
-// const id = req.params.id
+};
 
-//   const user = await User.findOne({
-//     _id: id,
-//   }).exec();
-
- 
-
-//   const isCompleted = "done"
-
-//   user.credit = user.credit ? parseFloat(user.credit) + amount : amount;
-
-//   user.save().then(()=>updatedTransactionStatus(id, isCompleted));
-
-// };
 
 
