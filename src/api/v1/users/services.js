@@ -21,7 +21,8 @@ const generateJwtToken = ({
 };
 
 exports.addUserService = async (req, res) => {
-  const { firstName, lastName, email, address, password, avater , month } = req.body;
+  const { firstName, lastName, email, address, password, avater, month } =
+    req.body;
   try {
     User.findOne({ email: email }).exec(async (error, user) => {
       if (user)
@@ -35,7 +36,7 @@ exports.addUserService = async (req, res) => {
         firstName,
         lastName,
         email,
-		month,
+        month,
         avater,
         password: hashedPassword,
         address,
@@ -99,7 +100,6 @@ exports.signinUsers = async (req, res) => {
 
 // get all Users
 exports.getUsersService = async (req, res) => {
-  
   const { q } = req.query;
 
   let query = { isDelete: false };
@@ -177,7 +177,7 @@ exports.updateUserService = async ({
   email,
   phone,
   avater,
-  credit
+  credit,
 }) => {
   const response = {
     code: 200,
@@ -185,8 +185,6 @@ exports.updateUserService = async ({
     message: "User updated successfully",
     data: {},
   };
-
-
 
   try {
     const user = await User.findOne({
@@ -204,21 +202,20 @@ exports.updateUserService = async ({
     user.email = email ? email : user.email;
     user.phone = phone ? phone : user.phone;
     user.avater = avater ? avater : user.avater;
-	
-	console.log(credit)
-	
-	if(credit == 0) {
-		user.credit = 0
-	}
-		
-    user.credit = parseFloat(credit) ? parseFloat(credit) : parseFloat(user.credit);
-	
-	
+
+    console.log(credit);
+
+    if (credit == 0) {
+      user.credit = 0;
+    }
+
+    user.credit = parseFloat(credit)
+      ? parseFloat(credit)
+      : parseFloat(user.credit);
 
     await user.save();
-	
+
     response.data.user = user;
-	
 
     return response;
   } catch (error) {
@@ -229,18 +226,13 @@ exports.updateUserService = async ({
   }
 };
 
-exports.updateCreditService = async ({
-  id,
-  credit
-}) => {
+exports.updateCreditService = async ({ id, credit }) => {
   const response = {
     code: 200,
     status: "success",
     message: "User updated successfully",
     data: {},
   };
-
-
 
   try {
     const user = await User.findOne({
@@ -253,14 +245,11 @@ exports.updateCreditService = async ({
       return response;
     }
 
-	  
+    user.credit = parseFloat(user.credit) + parseFloat(credit);
 
-	  user.credit =  parseFloat(user.credit) + parseFloat(credit);
-	
     await user.save();
-	
+
     response.data.user = user;
-	
 
     return response;
   } catch (error) {
@@ -271,10 +260,8 @@ exports.updateCreditService = async ({
   }
 };
 
-
-
 // update Users
-exports.updatePassordService = async ({ id, password , oldPassword}) => {
+exports.updatePassordService = async ({ id, password, oldPassword }) => {
   const response = {
     code: 200,
     status: "success",
@@ -295,23 +282,21 @@ exports.updatePassordService = async ({ id, password , oldPassword}) => {
 
     const isPasswordMatched = await bcrypt.compare(oldPassword, user.password);
 
-    if(isPasswordMatched){
+    if (isPasswordMatched) {
       const hashedPassword = await bcrypt.hash(password, 10);
       user.password = hashedPassword ? hashedPassword : user.password;
-  
-      await user.save();
-  
-      response.data.user = user;
-  
-      return response;
-    }else{
 
+      await user.save();
+
+      response.data.user = user;
+
+      return response;
+    } else {
       response.code = 422;
       response.status = "failed";
       response.message = "Old pass is wrong";
       return response;
     }
- 
   } catch (error) {
     response.code = 500;
     response.status = "failed";
@@ -319,8 +304,6 @@ exports.updatePassordService = async ({ id, password , oldPassword}) => {
     return response;
   }
 };
-
-
 
 // delete Users
 exports.deleteUserService = async ({ id }) => {
@@ -424,19 +407,12 @@ exports.getUserService = async ({ id }) => {
   }
 };
 
-
-
-exports.increaseUserCredit = async (id, amount ) => {
+exports.increaseUserCredit = async (id, amount) => {
   const user = await User.findOne({
     _id: id,
   }).exec();
 
   user.credit = user.credit ? parseFloat(user.credit) + amount : amount;
 
-
   await user.save();
-
 };
-
-
-
