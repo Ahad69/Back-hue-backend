@@ -38,7 +38,7 @@ router.post("/", async (req, res) => {
             newTransaction.save().then(()=>increaseUserCredit(user_id, parseFloat(amount)));
         }
 
-        res.send(`success ${event.id}`);
+        res.send(`Ahad You did well ${event.id}`);
         
     } catch (error) {
         console.log(error);
