@@ -426,7 +426,7 @@ exports.getUserService = async ({ id }) => {
 
 
 
-exports.increaseUserCredit = async (id, amount , invoice) => {
+exports.increaseUserCredit = async (id, amount ) => {
   const user = await User.findOne({
     _id: id,
   }).exec();
