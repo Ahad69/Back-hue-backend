@@ -31,6 +31,7 @@ router.post("/", async (req, res) => {
                 isCompleted,
                 userId : user_id,
                 isDelete: false,
+                email : event.data,
               };
 
             const newTransaction =  new Transactions(transaction);
