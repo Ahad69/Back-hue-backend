@@ -1,6 +1,6 @@
 const express = require("express");
 const { addUser, getUser, getUsers , updateUser , deleteUser , updateUserAddress, updatePassword, updateCredit   } = require("../users/controller");
-const { addUserService , getUsersService , signinUsers } = require("../users/services");
+const { addUserService , getUsersService , signinUsers , increaseUserCredit } = require("../users/services");
 const verifyToken = require("../middleware/checkLogin");
 const verifyAdmin = require("../middleware/adminCheck");
 
@@ -17,5 +17,7 @@ router.patch("/add-credit/:id", updateCredit);
 router.patch("/address/:id", updateUserAddress);
 router.patch("/password/:id", verifyToken, updatePassword);
 router.delete("/:id", verifyAdmin, deleteUser);
+
+
 
 module.exports = router;

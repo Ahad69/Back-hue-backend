@@ -1,7 +1,7 @@
 const express = require("express");
 const { Webhook } = require("coinbase-commerce-node");
 const { increaseUserCredit } = require("../users/services");
-const { updatedTransactionStatus } = require("../transaction/services");
+const { Transactions } = require("../models");
 const router = express.Router();
 
 router.post("/", async (req, res) => {
@@ -12,19 +12,41 @@ router.post("/", async (req, res) => {
     try {
         const event = Webhook.verifyEventBody(rawBody, signature, webhookSecret);
 
-
-        if (event.type === 'charge:confirmed') {
+        if (event.type === 'charge:created') {
+       
             const user_id = event.data.metadata.user_id;
             const amount = event.data.pricing.local.amount;
-            await increaseUserCredit(user_id, parseFloat(amount))
-          
+
+            const date = new Date().toDateString();
+            const isCompleted = "Done"
+            const invoice =
+            Math.floor(Math.random() * 500) * 10 +
+            user_id +
+            Math.floor(Math.random() * 500) * 10;
+
+            const transaction = {
+                amount,
+                date,
+                invoice,
+                isCompleted,
+                userId : user_id,
+                isDelete: false,
+              };
+
+            const newTransaction =  new Transactions(transaction);
+            await newTransaction.save().then(()=>increaseUserCredit(user_id, parseFloat(amount)));
         }
 
         res.send(`success ${event.id}`);
+        
     } catch (error) {
         console.log(error);
         res.status(400).send('failure!');
     }
+
+
+
+    
 });
 
 

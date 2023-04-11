@@ -125,13 +125,16 @@ exports.deleteTransactionServices = async ({ id }) => {
   }
 };
 
-exports.updatedTransactionStatus = async (id, isCompleted) => {
+// exports.updatedTransactionStatus = async (id, isCompleted) => {
  
-  const trans = await Transactions.findOne({
-    _id: id,
-  }).exec();
+//   console.log(id, isCompleted)
 
-  trans.isCompleted = isCompleted ?  isCompleted : trans.isCompleted;
+//   const trans = await Transactions.findOne({
+//     userId: id,
 
-  await user.save();
-};
+//   }).exec();
+
+//   // trans.isCompleted = isCompleted ?  isCompleted : trans.isCompleted;
+//   console.log(trans)
+//   // await user.save();
+// };

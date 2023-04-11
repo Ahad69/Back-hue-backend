@@ -99,6 +99,7 @@ exports.signinUsers = async (req, res) => {
 
 // get all Users
 exports.getUsersService = async (req, res) => {
+  
   const { q } = req.query;
 
   let query = { isDelete: false };
@@ -425,23 +426,29 @@ exports.getUserService = async ({ id }) => {
 
 
 
-exports.increaseUserCredit = async (id, amount) => {
-  const user = await User.findOne({
-    _id: id,
-  }).exec();
-
-  user.credit = user.credit ? parseFloat(user.credit) + amount : amount;
-
-
-  await user.save();
-
-};
-
-// exports.increaseUserCredit = async (id, amount) => {
+// exports.increaseUserCredit = async (id, amount , invoice) => {
 //   const user = await User.findOne({
 //     _id: id,
 //   }).exec();
 
+//   user.credit = user.credit ? parseFloat(user.credit) + amount : amount;
+
+
+//   await user.save();
+
+// };
+
+
+// exports.increaseUserCredit = async (req, res) => {
+
+// const amount = req.body.amount
+// const id = req.params.id
+
+//   const user = await User.findOne({
+//     _id: id,
+//   }).exec();
+
+ 
 
 //   const isCompleted = "done"
 
@@ -450,3 +457,5 @@ exports.increaseUserCredit = async (id, amount) => {
 //   user.save().then(()=>updatedTransactionStatus(id, isCompleted));
 
 // };
+
+
