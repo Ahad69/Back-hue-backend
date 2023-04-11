@@ -12,7 +12,7 @@ router.post("/", async (req, res) => {
     try {
         const event = Webhook.verifyEventBody(rawBody, signature, webhookSecret);
 
-        if (event.type === 'charge:created') {
+        if (event.type === 'charge:confirmed') {
        
             const user_id = event.data.metadata.user_id;
             const amount = event.data.pricing.local.amount;

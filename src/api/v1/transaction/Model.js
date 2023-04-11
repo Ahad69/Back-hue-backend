@@ -14,3 +14,4 @@ const transactionSchema = Schema(
   { timestamps: true }
 );
 module.exports = model("transaction", transactionSchema);
+
