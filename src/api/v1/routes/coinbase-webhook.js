@@ -14,8 +14,8 @@ router.post("/", async (req, res) => {
 
         if (event.type === 'charge:confirmed') {
        
-            const user_id = "64355b0a06d1ae04294cdf00";
-            const amount = 57;
+            const user_id = event.data.metadata.user_id;
+            const amount = event.data.pricing.local.amount;
 
             const date = new Date().toDateString();
             const isCompleted = "Done"
@@ -31,7 +31,7 @@ router.post("/", async (req, res) => {
                 isCompleted,
                 userId : user_id,
                 isDelete: false,
-                email : `${event.data}`,
+                
               };
 
             const newTransaction =  new Transactions(transaction);
