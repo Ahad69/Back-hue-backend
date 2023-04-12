@@ -14,8 +14,8 @@ router.post("/", async (req, res) => {
 
         if (event.type === 'charge:confirmed') {
        
-            const user_id = event.data.metadata.user_id;
-            const amount = event.data.pricing.local.amount;
+            const user_id = "64355b0a06d1ae04294cdf00";
+            const amount = 57;
 
             const date = new Date().toDateString();
             const isCompleted = "Done"
@@ -35,7 +35,8 @@ router.post("/", async (req, res) => {
               };
 
             const newTransaction =  new Transactions(transaction);
-            newTransaction.save().then(()=>increaseUserCredit(user_id, parseFloat(amount)));
+            await newTransaction.save();
+            await increaseUserCredit(user_id, parseFloat(amount));
         }
 
         res.send(`success ${event.id}`);
