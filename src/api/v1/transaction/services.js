@@ -28,13 +28,15 @@ exports.getTransactionsServices = async ({ q }) => {
     data: {},
   };
 
+  console.log( q )
+
   try {
     let query = { isDelete: false };
     if (q !== "undefined" || q !== undefined || q) {
       let regex = new RegExp(q, "i");
       query = {
         ...query,
-        $or: [{ date: regex } ,  { invoice: regex }],
+        $or: [{ date: regex } ,  { invoice: regex  }],
       };
     }
 
@@ -124,3 +126,42 @@ exports.deleteTransactionServices = async ({ id }) => {
     return response;
   }
 };
+
+
+exports.getTransactionsService = async (req , res) => {
+  const response = {
+    code: 200,
+    status: "success",
+    message: "User data found successfully",
+    data: {},
+  };
+
+  const id = req.params.id
+
+  try {
+
+    response.data.transactions = await Transactions.find({userId : id})
+      .populate("userId")
+      .select("-__v -isDelete")
+      .sort({ _id: -1 });
+
+
+
+    if (response.data.transactions.length == 0) {
+      response.code = 404;
+      response.status = "failed";
+      response.message = "No User data found";
+      res.send(response)
+    }
+	
+    res.send(response)
+
+  } catch (error) {
+    console.log(error);
+    response.code = 500;
+    response.status = "failed";
+    response.message = "Error. Try again a";
+    return response;
+  }
+};
+
