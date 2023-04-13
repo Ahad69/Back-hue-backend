@@ -139,7 +139,7 @@ exports.getTransactionsService = async (req , res) => {
   const id = req.params.id
 
   try {
-    if (id) {
+    if (!id) {
       response.code = 404;
       response.status = "failed";
       response.message = "No User data found";
