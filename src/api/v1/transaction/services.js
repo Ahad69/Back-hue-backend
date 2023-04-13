@@ -139,6 +139,12 @@ exports.getTransactionsService = async (req , res) => {
   const id = req.params.id
 
   try {
+    if (id) {
+      response.code = 404;
+      response.status = "failed";
+      response.message = "No User data found";
+      res.send(response)
+    }
 
     response.data.transactions = await Transactions.find({userId : id})
       .populate("userId")
