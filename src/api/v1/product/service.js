@@ -494,13 +494,20 @@ exports.getProductService = async ({ id }) => {
     data: {},
   };
 
+
+
   try {
-    response.data.product = await Product.findOne({
-      _id: id,
-      isDelete: false,
-    })
-      .select("-__v -isDelete")
-      .exec();
+    response.data.product = await Product.aggregate([
+      { $match: { $expr : { $eq: [ '$_id' , { $toObjectId: `${id}` } ] } } },
+      {
+        $lookup: {
+          from: "users",
+          localField: "posterId",
+          foreignField: "_id",
+          as: "owner",
+        },
+      },
+    ])
 
     if (!response.data.product) {
       response.code = 404;
