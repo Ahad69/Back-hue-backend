@@ -326,6 +326,7 @@ exports.getAllPosts = async ({ page, category }) => {
     status: "success",
     message: "Fetch Product list successfully",
     data: {},
+    page : 1
   };
 
   try {
@@ -334,7 +335,9 @@ exports.getAllPosts = async ({ page, category }) => {
     const totalDocs = await Product.countDocuments({});
     const totalPage = Math.ceil(totalDocs / limit);
 
+
     const products = await Product.aggregate([
+      { $sort: {_id: -1 } },
       {
         $match: {
           isApproved: true,
@@ -356,8 +359,10 @@ exports.getAllPosts = async ({ page, category }) => {
       },
       { $skip: (pageNumber - 1) * limit },
       { $limit: limit },
-      { $sort: { isPremium: -1, _id: -1 } },
+
     ]);
+
+
 
     if (products.length === 0) {
       response.code = 404;
@@ -369,6 +374,7 @@ exports.getAllPosts = async ({ page, category }) => {
     response.data = {
       products
     };
+    response.page = totalPage
 
     return response;
   } catch (error) {
