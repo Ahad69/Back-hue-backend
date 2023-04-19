@@ -1,47 +1,60 @@
-const express = require('express');
-const cors = require('cors');
-const csrf = require('csurf');
-const cookieParser = require('cookie-parser');
-const morgan = require('morgan');
-const { readdirSync } = require('fs');
-const bodyParser = require('body-parser');
-
+const express = require("express");
+const cors = require("cors");
+const csrf = require("csurf");
+const cookieParser = require("cookie-parser");
+const morgan = require("morgan");
+const { readdirSync } = require("fs");
+const bodyParser = require("body-parser");
 
 const csrfProtection = csrf({ cookie: true });
 
 const app = express();
-require('./src/api/v1/config').dbConnection();
+require("./src/api/v1/config").dbConnection();
 
-app.use(express.json({
-  verify: (req, res, buf) => {
-    req.rawBody = buf
-  },
-  limit : "5mb"
-}));
-app.use(express.urlencoded({ extended: false , limit: '5mb'}));
+app.use(
+  express.json({
+    verify: (req, res, buf) => {
+      req.rawBody = buf;
+    },
+    limit: "5mb",
+  })
+);
+app.use(express.urlencoded({ extended: false, limit: "5mb" }));
+
 // app.use(cors());
-app.use(cors({
-  origin: 'http://localhost:3000'
-}));
-// app.use(express.json())
+app.use(
+  cors({
+    origin: "*"
+  })
+);
+
 
 
 
 app.use(cookieParser());
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 
 // app.use(csrfProtection);
 
-readdirSync('./src/api/v1/routes').map((route) =>
-  app.use(`/api/${route.split(".")[0]}`, require(`./src/api/v1/routes/${route}`)
+readdirSync("./src/api/v1/routes").map((route) =>
+  app.use(
+    `/api/${route.split(".")[0]}`,
+    require(`./src/api/v1/routes/${route}`)
   )
 );
 
-app.get('/api/csrf-token', (req, res) => {
-  res.json({ csrfToken: '' });
+app.get("/api/csrf-token", (req, res) => {
+  res.json({ csrfToken: "" });
 });
-app.get('/', (req, res) => {
-  res.json({ message : 'server is running' });
+app.get("/", (req, res) => {
+  res.json({ message: "server is running" });
+});
+
+app.options("/", (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, PATCH");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  res.sendStatus(204);
 });
 
 module.exports = app;
