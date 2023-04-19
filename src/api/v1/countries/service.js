@@ -51,7 +51,6 @@ exports.getMediasService = async (req, res) => {
     Country.find({})
       .select("-__v ").sort()
       .exec((error, categories) => {
-        console.log(categories)
 
         if (error) return res.status(400).json({ error });
         if (categories) {
@@ -110,7 +109,6 @@ exports.getSearchService = async (req , res) => {
     response.code = 500;
     response.status = "failed";
     response.message = "Error. Try again sdf";
-    console.log(error)
     return response;
   }
 };
@@ -198,7 +196,7 @@ exports.deleteMediaService = async ({ id }) => {
     status: "success",
     message: "Delete Media successfully",
   };
-  console.log(id);
+
   try {
     const media = await Country.findOne({
       _id: id,
