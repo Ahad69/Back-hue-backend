@@ -21,12 +21,12 @@ app.use(
 );
 app.use(express.urlencoded({ extended: false, limit: "5mb" }));
 
-app.use(cors());
-// app.use(
-//   cors({
-//     origin: ["https://adbacklist-admin.vercel.app" , 'http://localhost:3000'],
-//  })
-// );
+// app.use(cors());
+app.use(
+  cors({
+    origin: '*',
+ })
+);
 
 
 
