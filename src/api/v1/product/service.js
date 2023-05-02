@@ -296,7 +296,7 @@ exports.getApprovedService = async ({}) => {
       },
 	  { $sort: { _id: -1 } },
 	  { $sort: { isPremium: -1 } },
-    { $limit: 1000 },
+    { $limit: 800 },
     ]);
 
     if (products.length === 0) {
