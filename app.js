@@ -26,7 +26,7 @@ const corsOptions ={
   origin: "*", 
   credentials:true,            //access-control-allow-credentials:true
   optionSuccessStatus: 200,
-  
+  preflightContinue:  true,
 }
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions))
