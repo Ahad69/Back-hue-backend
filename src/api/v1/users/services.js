@@ -1,4 +1,4 @@
-const { User } = require("../models");
+const { User, Product } = require("../models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { updatedTransactionStatus } = require("../transaction/services");
@@ -111,18 +111,26 @@ exports.getUsersService = async (req, res) => {
     };
   }
 
+  // console.log(userPosts)
+
   const totalDocuments = await User.countDocuments(query);
 
   User.find(query)
     .select("-__v -isDelete ")
     .sort({ _id: -1 })
-    .lean()
+
     .exec((error, users) => {
+
+
+    
+
       if (error) return res.status(400).json({ error });
       if (users) {
         res.status(200).json({ users, totalDocuments });
       }
     });
+
+    
 };
 
 // update Users

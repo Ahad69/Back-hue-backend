@@ -47,8 +47,6 @@ exports.updateProductService = async ({
     data: {},
   };
 
-
-
   try {
     const product = await Product.findOne({
       _id: id,
@@ -59,7 +57,6 @@ exports.updateProductService = async ({
       response.message = "No Product data found";
       return response;
     }
-
 
     product.name = name ? name : product.name;
     product.link = link ? link : product.link;
@@ -76,15 +73,12 @@ exports.updateProductService = async ({
     product.imgThree = imgThree ? imgThree : product.imgThree;
     product.imgFour = imgFour ? imgFour : product.imgFour;
 
-    console.log(product , "product");
+    console.log(product, "product");
 
     await product.save();
 
-
-
     response.data.product = product;
     return response;
-
   } catch (error) {
     response.code = 500;
     response.status = "failed";
@@ -294,9 +288,8 @@ exports.getApprovedService = async ({}) => {
           as: "owner",
         },
       },
-	  { $sort: { _id: -1 } },
-	  { $sort: { isPremium: -1 } },
-    { $limit: 500 },
+      { $sort: { isPremium: -1, createdAt: -1 } },
+      { $limit: 500 },
     ]);
 
     if (products.length === 0) {
@@ -345,7 +338,7 @@ exports.getAllPosts = async ({ page, category }) => {
           subCategory: category,
         },
       },
- 
+
       {
         $lookup: {
           from: "users",
@@ -367,7 +360,7 @@ exports.getAllPosts = async ({ page, category }) => {
     }
 
     response.data = {
-      products
+      products,
     };
 
     return response;
@@ -452,20 +445,30 @@ exports.getOnlyUserPosts = async ({ id }) => {
   }
 };
 
-exports.getAdminUserPosts = async ({ id }) => {
+exports.getAdminUserPosts = async ({ id, page }) => {
   const response = {
     code: 200,
     status: "success",
     message: "Fetch deatiled Product successfully",
     data: {},
+    page: 0,
   };
-
   try {
+    const pageNumber = page ? parseInt(page) : 1;
+    const limit = 8;
+    const allPosts = await Product.find({
+      posterId: id,
+      isDelete: false,
+    }).countDocuments({});
+
     response.data.product = await Product.find({
       posterId: id,
       isDelete: false,
     })
+
       .sort({ _id: -1 })
+      .skip((pageNumber - 1) * limit)
+      .limit(limit)
       .select("-__v -isDelete")
       .exec();
 
@@ -476,6 +479,7 @@ exports.getAdminUserPosts = async ({ id }) => {
       return response;
     }
 
+    response.page = allPosts;
     return response;
   } catch (error) {
     response.code = 500;
@@ -494,11 +498,9 @@ exports.getProductService = async ({ id }) => {
     data: {},
   };
 
-
-
   try {
     response.data.product = await Product.aggregate([
-      { $match: { $expr : { $eq: [ '$_id' , { $toObjectId: `${id}` } ] } } },
+      { $match: { $expr: { $eq: ["$_id", { $toObjectId: `${id}` }] } } },
       {
         $lookup: {
           from: "users",
@@ -507,7 +509,7 @@ exports.getProductService = async ({ id }) => {
           as: "owner",
         },
       },
-    ])
+    ]);
 
     if (!response.data.product) {
       response.code = 404;

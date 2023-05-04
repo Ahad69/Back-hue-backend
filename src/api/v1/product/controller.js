@@ -117,11 +117,12 @@ exports.addProduct = async (req, res) => {
   
     // get one Products
   exports.getAdminPosterPost = async (req, res) => {
-    const { status, code, message, data } = await getAdminUserPosts({
+    const { status, code, message, data , page} = await getAdminUserPosts({
       ...req.params,
+      ...req.query
     });
     if (data.product) {
-      return res.status(code).json({ code, status, message, data });
+      return res.status(code).json({ code, status, message, data, page });
     }
     res.status(code).json({ code, status, message });
   };
