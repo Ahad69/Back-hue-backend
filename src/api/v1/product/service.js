@@ -289,7 +289,7 @@ exports.getApprovedService = async ({}) => {
         },
       },
       { $sort: { isPremium: -1, createdAt: -1 } },
-      { $limit: 400 },
+      { $limit: 500 },
     ]);
 
     if (products.length === 0) {
