@@ -13,11 +13,11 @@ exports.addBlog = async (req, res) => {
 };
 
 exports.getBlog = async(req , res)=>{
-  const {status , code , message, data} = await getBlogsServices({
+  const {status , code , message, data, page} = await getBlogsServices({
     ...req.query,
   });
   if (data.blogs) {
-    return res.status(code).json({ code, status, message, data });
+    return res.status(code).json({ code, status, message, data, page });
   }
   res.status(code).json({ code, status, message });
 }

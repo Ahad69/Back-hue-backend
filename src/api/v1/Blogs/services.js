@@ -20,13 +20,16 @@ exports.addBlogServices = async ({ body }) => {
   }
 };
 
-exports.getBlogsServices = async ({ q }) => {
+exports.getBlogsServices = async ({ q , page }) => {
   const response = {
     code: 200,
     status: "success",
     message: "Fetch Blog list successfully",
     data: {},
+    page : 0
   };
+
+  console.log(page)
 
   try {
     let query = { isDelete: false };
@@ -38,9 +41,17 @@ exports.getBlogsServices = async ({ q }) => {
         $or: [{ writer: regex }, { title: regex } , { permalink : regex }],
       };
     }
+    
+    const pageNumber = page ? parseInt(page) : 1;
+    const limit = 10;
+    const totalBlogs = await Blogs.countDocuments({})
 
-    const blogs = await Blogs.find(query).sort({ _id: -1 });
 
+    const blogs = await Blogs.aggregate([
+      { $sort: { isPremium: -1, _id : -1 } },
+      { $skip: (pageNumber - 1) * limit },
+      { $limit: limit },
+    ])
     if (blogs.length === 0) {
       response.code = 404;
       response.status = "failded";
@@ -48,6 +59,10 @@ exports.getBlogsServices = async ({ q }) => {
       return response;
     }
 
+    console.log(blogs.length , "blogs length")
+
+
+    response.page = totalBlogs
     response.data = {
       blogs,
     };
