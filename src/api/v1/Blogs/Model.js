@@ -16,4 +16,6 @@ const blogSchema = Schema(
   },
   { timestamps: true }
 );
+
+
 module.exports = model("blogs", blogSchema);

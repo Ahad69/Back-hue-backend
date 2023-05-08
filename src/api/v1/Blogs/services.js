@@ -40,9 +40,12 @@ exports.getBlogsServices = async ({ q , page }) => {
       };
     }
 
+
+
     const pageNumber = page ? parseInt(page) : 1;
     const limit = 6;
     const totalBlogs = await Blogs.countDocuments({})
+
 
 
     const blogs = await Blogs.aggregate([
@@ -56,6 +59,8 @@ exports.getBlogsServices = async ({ q , page }) => {
       response.message = "No Product data found";
       return response;
     }
+
+    console.log(blogs)
 
     response.page = totalBlogs
     response.data = {
@@ -79,8 +84,6 @@ exports.singleBlogServices = async ({ q }) => {
     message: "Fetch Blog list successfully",
     data: {},
   };
-
-
 
   try {
 
@@ -196,7 +199,6 @@ exports.deleteBlogServices = async ({ id }) => {
 exports.deleteMany = async (req, res) => {
   const ids = req.body;
 
-  console.log(ids);
 
   try {
     await Blogs.deleteMany(

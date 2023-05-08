@@ -275,7 +275,6 @@ exports.getApprovedService = async ({ page }) => {
     postPerMonth: 0,
   };
 
-
   try {
     const totalPost = await Product.countDocuments({});
 
@@ -368,13 +367,11 @@ exports.getApprovedService = async ({ page }) => {
     // };
     // const perMonthPost = query(todaypost);
 
-
-
     const pageNumber = page ? parseInt(page) : 1;
     const limit = 10;
 
     const products = await Product.aggregate([
-      { $sort: { isPremium: -1, _id : -1 } },
+      { $sort: { isPremium: -1, _id: -1 } },
       {
         $match: {
           isApproved: true,
@@ -421,14 +418,15 @@ exports.getAllPosts = async ({ page, category }) => {
     status: "success",
     message: "Fetch Product list successfully",
     data: {},
+    pages : 0
   };
 
   try {
     const pageNumber = page ? parseInt(page) : 1;
     const limit = 50;
-    const totalDocs = await Product.countDocuments({});
-    const totalPage = Math.ceil(totalDocs / limit);
 
+    const totalDocs = await Product.find({ subCategory: category}).countDocuments({});
+    const totalPage = Math.ceil(totalDocs / limit);
     const products = await Product.aggregate([
       {
         $match: {
@@ -440,7 +438,7 @@ exports.getAllPosts = async ({ page, category }) => {
           subCategory: category,
         },
       },
-
+      { $sort: { isPremium: -1, _id: -1 } },
       {
         $lookup: {
           from: "users",
@@ -451,7 +449,7 @@ exports.getAllPosts = async ({ page, category }) => {
       },
       { $skip: (pageNumber - 1) * limit },
       { $limit: limit },
-      { $sort: { isPremium: -1, _id: -1 } },
+
     ]);
 
     if (products.length === 0) {
@@ -461,6 +459,9 @@ exports.getAllPosts = async ({ page, category }) => {
       return response;
     }
 
+    console.log(totalDocs)
+
+    response.pages = totalDocs
     response.data = {
       products,
     };
@@ -474,6 +475,9 @@ exports.getAllPosts = async ({ page, category }) => {
     return response;
   }
 };
+
+
+
 
 // get Products by search
 exports.searchProductService = async ({ q }) => {
@@ -513,25 +517,20 @@ exports.searchProductService = async ({ q }) => {
   }
 };
 
-
-
-
-
 // get one Products by id
-exports.getOnlyUserPosts = async ({ id , page}) => {
+exports.getOnlyUserPosts = async ({ id, page }) => {
   const response = {
     code: 200,
     status: "success",
     message: "Fetch deatiled Product successfully",
     data: {},
-    pages : 0
+    pages: 0,
   };
-
 
   try {
     const pageNumber = page ? parseInt(page) : 1;
     const limit = 10;
-    
+
     const allPosts = await Product.find({
       posterId: id,
       isDelete: false,
@@ -542,8 +541,7 @@ exports.getOnlyUserPosts = async ({ id , page}) => {
       { $sort: { isPremium: -1, _id: -1 } },
       { $skip: (pageNumber - 1) * limit },
       { $limit: limit },
-    ])
-
+    ]);
 
     if (posts.length == 0) {
       response.code = 404;
@@ -553,22 +551,19 @@ exports.getOnlyUserPosts = async ({ id , page}) => {
     }
 
     response.data = {
-      posts
+      posts,
     };
-    response.pages = allPosts
+    response.pages = allPosts;
 
     return response;
-
   } catch (error) {
-    console.log(error)
+    console.log(error);
     response.code = 500;
     response.status = "failed";
     response.message = "Error. Try again";
     return response;
   }
 };
-
-
 
 exports.getAdminUserPosts = async ({ id, page }) => {
   const response = {
