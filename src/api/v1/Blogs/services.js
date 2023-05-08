@@ -40,8 +40,6 @@ exports.getBlogsServices = async ({ q , page }) => {
       };
     }
 
-  
-    
     const pageNumber = page ? parseInt(page) : 1;
     const limit = 6;
     const totalBlogs = await Blogs.countDocuments({})
@@ -65,6 +63,38 @@ exports.getBlogsServices = async ({ q , page }) => {
     };
 
     return response;
+  } catch (error) {
+    console.log(error);
+    response.code = 500;
+    response.status = "failed";
+    response.message = "Error. Try again a";
+    return response;
+  }
+};
+
+exports.singleBlogServices = async ({ q }) => {
+  const response = {
+    code: 200,
+    status: "success",
+    message: "Fetch Blog list successfully",
+    data: {},
+  };
+
+
+
+  try {
+
+    const blog = await Blogs.find({permalink : q})
+    if(!blog){
+      response.code = 404;
+      response.status = "failed";
+      response.message = "Error. Try again";
+      return response;
+    }
+
+    response.data = {blog}
+  
+  return response
   } catch (error) {
     console.log(error);
     response.code = 500;
@@ -233,9 +263,6 @@ exports.updatePablishMany = async (req, res) => {
   };
 
   const { data } = req.body;
-
-
-
   try {
     data.map((a) => {
       const f = Blogs.findByIdAndUpdate(

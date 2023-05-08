@@ -539,9 +539,9 @@ exports.getOnlyUserPosts = async ({ id , page}) => {
 
     const posts = await Product.aggregate([
       { $match: { $expr: { $eq: ["$posterId", { $toObjectId: `${id}` }] } } },
+      { $sort: { isPremium: -1, _id: -1 } },
       { $skip: (pageNumber - 1) * limit },
       { $limit: limit },
-      { $sort: { isPremium: -1, _id: -1 } },
     ])
 
 

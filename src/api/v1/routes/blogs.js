@@ -1,5 +1,5 @@
 const express = require("express");
-const { addBlog, getBlog, updateBlogs, deleteBlog } = require("../Blogs/controllers");
+const { addBlog, getBlog, updateBlogs, deleteBlog, singleBlog } = require("../Blogs/controllers");
 const { deleteMany, updatePauseMany , updatePablishMany } = require("../Blogs/services");
 const verifyAdmin = require("../middleware/adminCheck");
 const router = express.Router();
@@ -8,6 +8,7 @@ const router = express.Router();
 
 router.post("/", verifyAdmin ,addBlog);
 router.get("/" , getBlog);
+router.get("/single" , singleBlog);
 router.patch("/:id",  verifyAdmin, updateBlogs);
 router.delete("/:id", verifyAdmin , deleteBlog);
 router.post("/deleteMany",  deleteMany);

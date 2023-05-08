@@ -1,4 +1,4 @@
-const { addBlogServices, getBlogsServices, updateBlogServices , deleteBlogServices } = require("./services");
+const { addBlogServices, getBlogsServices, updateBlogServices , deleteBlogServices, singleBlogServices } = require("./services");
 
 
 
@@ -18,6 +18,18 @@ exports.getBlog = async(req , res)=>{
   });
   if (data.blogs) {
     return res.status(code).json({ code, status, message, data, page });
+  }
+  res.status(code).json({ code, status, message });
+}
+
+
+
+exports.singleBlog = async(req , res)=>{
+  const {status , code , message, data} = await singleBlogServices({
+    ...req.query,
+  });
+  if (data) {
+    return res.status(code).json({ code, status, message, data });
   }
   res.status(code).json({ code, status, message });
 }
