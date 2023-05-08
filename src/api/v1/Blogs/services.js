@@ -29,8 +29,6 @@ exports.getBlogsServices = async ({ q , page }) => {
     page : 0
   };
 
-  console.log(page)
-
   try {
     let query = { isDelete: false };
     if (q !== "undefined" || q !== undefined || q) {
@@ -41,9 +39,11 @@ exports.getBlogsServices = async ({ q , page }) => {
         $or: [{ writer: regex }, { title: regex } , { permalink : regex }],
       };
     }
+
+  
     
     const pageNumber = page ? parseInt(page) : 1;
-    const limit = 10;
+    const limit = 6;
     const totalBlogs = await Blogs.countDocuments({})
 
 
@@ -58,9 +58,6 @@ exports.getBlogsServices = async ({ q , page }) => {
       response.message = "No Product data found";
       return response;
     }
-
-    console.log(blogs.length , "blogs length")
-
 
     response.page = totalBlogs
     response.data = {

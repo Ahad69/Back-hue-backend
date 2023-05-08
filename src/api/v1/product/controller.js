@@ -106,11 +106,12 @@ exports.addProduct = async (req, res) => {
 
   // get one Products
   exports.getPosterPost = async (req, res) => {
-    const { status, code, message, data } = await getOnlyUserPosts({
+    const { status, code, message, data, pages } = await getOnlyUserPosts({
       ...req.params,
+      ...req.query
     });
-    if (data.product) {
-      return res.status(code).json({ code, status, message, data });
+    if (data) {
+      return res.status(code).json({ code, status, message, data, pages });
     }
     res.status(code).json({ code, status, message });
   };
