@@ -211,7 +211,7 @@ exports.updateUserService = async ({
     user.phone = phone ? phone : user.phone;
     user.avater = avater ? avater : user.avater;
 
-    console.log(credit);
+    console.log(credit, "Asdfdfg");
 
     if (credit == 0) {
       user.credit = 0;

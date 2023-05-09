@@ -135,7 +135,7 @@ exports.addProduct = async (req, res) => {
       ...req.params,
     });
     if (data.product) {
-      console.log(data.product)
+ 
       return res.status(code).json({ code, status, message, data });
     }
     res.status(code).json({ code, status, message });

@@ -13,7 +13,8 @@ exports.addProductService = async ({ body }) => {
     await newProduct.save();
     return response;
   } catch (error) {
-    console.log(error);
+    console.error(error);
+
     response.code = 500;
     response.status = "failed";
     response.message = "Error. Try again";
@@ -412,33 +413,33 @@ exports.getApprovedService = async ({ page }) => {
   }
 };
 
-exports.getAllPosts = async ({ page, category }) => {
+exports.getAllPosts = async ({ page, category, state }) => {
   const response = {
     code: 200,
     status: "success",
     message: "Fetch Product list successfully",
     data: {},
-    pages : 0
+    pages: 0,
   };
 
   try {
     const pageNumber = page ? parseInt(page) : 1;
     const limit = 50;
+    const totalDocs = await Product.find({
+      subCategory: category,
+      cities: { $elemMatch: { $eq: state } },
+    }).countDocuments({});
 
-    const totalDocs = await Product.find({ subCategory: category}).countDocuments({});
-    const totalPage = Math.ceil(totalDocs / limit);
+
     const products = await Product.aggregate([
-      {
-        $match: {
-          isApproved: true,
-        },
-      },
+      { $sort: { isPremium : -1 , _id: -1 } },
       {
         $match: {
           subCategory: category,
+          cities: { $elemMatch: { $eq: state } },
+          isApproved: true,
         },
       },
-      { $sort: { isPremium: -1, _id: -1 } },
       {
         $lookup: {
           from: "users",
@@ -449,8 +450,10 @@ exports.getAllPosts = async ({ page, category }) => {
       },
       { $skip: (pageNumber - 1) * limit },
       { $limit: limit },
-
+      { $project: { name: 1, _id: 1, updatedAt: 1 , isPremium : 1 , age : 1} },
     ]);
+
+
 
     if (products.length === 0) {
       response.code = 404;
@@ -459,9 +462,8 @@ exports.getAllPosts = async ({ page, category }) => {
       return response;
     }
 
-    console.log(totalDocs)
 
-    response.pages = totalDocs
+    response.pages = totalDocs;
     response.data = {
       products,
     };
@@ -475,9 +477,6 @@ exports.getAllPosts = async ({ page, category }) => {
     return response;
   }
 };
-
-
-
 
 // get Products by search
 exports.searchProductService = async ({ q }) => {
