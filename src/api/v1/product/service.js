@@ -450,7 +450,7 @@ exports.getAllPosts = async ({ page, category, state }) => {
       },
       { $skip: (pageNumber - 1) * limit },
       { $limit: limit },
-      { $project: { name: 1, _id: 1, updatedAt: 1 , isPremium : 1 , age : 1} },
+      { $project: { name: 1, _id: 1, updatedAt: 1 , isPremium : 1 , age : 1} }
     ]);
 
 
