@@ -55,19 +55,6 @@ exports.getBlogsServices = async ({ q, page }) => {
       .skip((pageNumber - 1) * limit)
       .limit(limit);
 
-    // const blogs = await Blogs.aggregate([
-    //   {
-    //     $match: {
-    //       category : category ,
-    //       subCategory: subCategory ? subCategory : "",
-    //     },
-    //   },
-    //   { $sort: { isPremium: -1, _id : -1 } },
-    //   { $skip: (pageNumber - 1) * limit },
-    //   { $limit: limit },
-    // ])
-
-    console.log(blogs);
 
     if (blogs.length === 0) {
       response.code = 404;
@@ -76,9 +63,9 @@ exports.getBlogsServices = async ({ q, page }) => {
       return response;
     }
 
-    console.log(blogs);
 
-    response.page = totalBlogs;
+
+    response.page = q ? blogs.length  : totalBlogs;
     response.data = {
       blogs,
     };
