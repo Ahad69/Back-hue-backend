@@ -20,13 +20,13 @@ exports.addBlogServices = async ({ body }) => {
   }
 };
 
-exports.getBlogsServices = async ({ q , page }) => {
+exports.getBlogsServices = async ({ q, page }) => {
   const response = {
     code: 200,
     status: "success",
     message: "Fetch Blog list successfully",
     data: {},
-    page : 0
+    page: 0,
   };
 
   try {
@@ -36,23 +36,39 @@ exports.getBlogsServices = async ({ q , page }) => {
 
       query = {
         ...query,
-        $or: [{ writer: regex }, { title: regex } , { permalink : regex }],
+        $or: [
+          { category: regex },
+          { title: regex },
+          { permalink: regex },
+          { subCategory: regex },
+        ],
       };
     }
 
 
-
     const pageNumber = page ? parseInt(page) : 1;
     const limit = 6;
-    const totalBlogs = await Blogs.countDocuments({})
+    const totalBlogs = await Blogs.countDocuments({});
 
+    const blogs = await Blogs.find(query)
+      .sort({ _id: -1 })
+      .skip((pageNumber - 1) * limit)
+      .limit(limit);
 
+    // const blogs = await Blogs.aggregate([
+    //   {
+    //     $match: {
+    //       category : category ,
+    //       subCategory: subCategory ? subCategory : "",
+    //     },
+    //   },
+    //   { $sort: { isPremium: -1, _id : -1 } },
+    //   { $skip: (pageNumber - 1) * limit },
+    //   { $limit: limit },
+    // ])
 
-    const blogs = await Blogs.aggregate([
-      { $sort: { isPremium: -1, _id : -1 } },
-      { $skip: (pageNumber - 1) * limit },
-      { $limit: limit },
-    ])
+    console.log(blogs);
+
     if (blogs.length === 0) {
       response.code = 404;
       response.status = "failded";
@@ -60,9 +76,9 @@ exports.getBlogsServices = async ({ q , page }) => {
       return response;
     }
 
-    console.log(blogs)
+    console.log(blogs);
 
-    response.page = totalBlogs
+    response.page = totalBlogs;
     response.data = {
       blogs,
     };
@@ -86,18 +102,17 @@ exports.singleBlogServices = async ({ q }) => {
   };
 
   try {
-
-    const blog = await Blogs.find({permalink : q})
-    if(!blog){
+    const blog = await Blogs.find({ permalink: q });
+    if (!blog) {
       response.code = 404;
       response.status = "failed";
       response.message = "Error. Try again";
       return response;
     }
 
-    response.data = {blog}
-  
-  return response
+    response.data = { blog };
+
+    return response;
   } catch (error) {
     console.log(error);
     response.code = 500;
@@ -106,9 +121,6 @@ exports.singleBlogServices = async ({ q }) => {
     return response;
   }
 };
-
-
-
 
 // update blogs
 exports.updateBlogServices = async ({
@@ -122,7 +134,7 @@ exports.updateBlogServices = async ({
   status,
   permalink,
   metaDesc,
-  metaKey
+  metaKey,
 }) => {
   const response = {
     code: 200,
@@ -151,7 +163,7 @@ exports.updateBlogServices = async ({
     blog.writer = writer ? writer : blog.writer;
     blog.status = status ? status : blog.status;
     blog.metaDesc = metaDesc ? metaDesc : blog.metaDesc;
-	blog.metaKey = metaKey ? metaKey : blog.metaKey;
+    blog.metaKey = metaKey ? metaKey : blog.metaKey;
 
     await blog.save();
 
@@ -199,7 +211,6 @@ exports.deleteBlogServices = async ({ id }) => {
 exports.deleteMany = async (req, res) => {
   const ids = req.body;
 
-
   try {
     await Blogs.deleteMany(
       {
@@ -234,8 +245,6 @@ exports.updatePauseMany = async (req, res) => {
   };
 
   const { data } = req.body;
-
-
 
   try {
     data.map((a) => {
