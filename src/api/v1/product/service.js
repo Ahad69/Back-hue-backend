@@ -273,11 +273,16 @@ exports.getApprovedService = async ({ page }) => {
     message: "Fetch Product list successfully",
     data: {},
     totalPost: 0,
-    postPerMonth: 0,
+    todayPost: 0,
   };
 
   try {
     const totalPost = await Product.countDocuments({});
+
+    const today =  new Date().toDateString()
+
+    const todayPost = await Product.find({
+      createdAt : { $gte: today  }}).countDocuments({});
 
 
 
@@ -312,6 +317,7 @@ exports.getApprovedService = async ({ page }) => {
 
     // response.postPerMonth = perMonthPost;
     response.totalPost = totalPost;
+    response.todayPost = todayPost;
     response.data = {
       products,
     };

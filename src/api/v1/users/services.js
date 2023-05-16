@@ -100,7 +100,8 @@ exports.signinUsers = async (req, res) => {
 
 // get all Users
 exports.getUsersService = async (req, res) => {
-  const { q } = req.query;
+
+  const { q , page } = req.query;
 
   let query = { isDelete: false };
   if (q !== "undefined" || q !== undefined || q) {
@@ -111,27 +112,26 @@ exports.getUsersService = async (req, res) => {
     };
   }
 
-  // console.log(userPosts)
-
-  const totalDocuments = await User.countDocuments(query);
-
-  User.find(query)
-    .select("-__v -isDelete ")
-    .sort({ _id: -1 })
-
-    .exec((error, users) => {
 
 
-    
+  const totalDocuments = await User.countDocuments({});
+  const pageNumber = page ? parseInt(page) : 1;
+  const limit = 10;
 
-      if (error) return res.status(400).json({ error });
-      if (users) {
-        res.status(200).json({ users, totalDocuments });
-      }
-    });
+  console.log(page)
 
-    
+
+  const users = await User.find(query)
+  .sort({ _id: -1 })
+  .skip((pageNumber - 1) * limit)
+  .limit(limit);
+
+  res.status(200).json({users, totalDocuments})
+  
 };
+
+
+
 
 // update Users
 exports.updateUserAddressService = async ({
@@ -211,7 +211,7 @@ exports.updateUserService = async ({
     user.phone = phone ? phone : user.phone;
     user.avater = avater ? avater : user.avater;
 
-    console.log(credit, "Asdfdfg");
+
 
     if (credit == 0) {
       user.credit = 0;
