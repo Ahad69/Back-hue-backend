@@ -1,5 +1,26 @@
 const { Product } = require("../models");
 
+const cron = require("node-cron");
+
+const updateDataStatus = async () => {
+  const validate = await Product.find({ isPremium: false });
+
+  const minus = validate.map(async(a) => {
+    a.premiumDay = a.premiumDay - 12;
+    if (a.premiumDay == 0) {
+      a.isPremium = true;
+    }
+    await a.save();
+  });
+};
+
+cron.schedule("0 */12 * * *", () => {
+  updateDataStatus();
+});
+
+
+
+
 // add Products
 exports.addProductService = async ({ body }) => {
   const response = {
@@ -287,25 +308,20 @@ exports.getApprovedService = async ({ page, q }) => {
     const pageNumber = page ? parseInt(page) : 1;
     const limit = 10;
 
-
     if (q !== "undefined" || q !== undefined || q) {
       let regex = new RegExp(q, "i");
 
       query = {
         ...query,
-        $or: [
-          { category: regex },
-          { subCategory: regex },
-        ],
+        $or: [{ category: regex }, { subCategory: regex }],
       };
     }
 
-    const products = await Product.find(query).populate("posterId")
+    const products = await Product.find(query)
+      .populate("posterId")
       .sort({ _id: -1 })
       .skip((pageNumber - 1) * limit)
       .limit(limit);
-
-
 
     if (products.length === 0) {
       response.code = 404;
@@ -349,7 +365,7 @@ exports.getAllPosts = async ({ page, category, state }) => {
     }).countDocuments({});
 
     const products = await Product.aggregate([
-      { $sort: { isPremium: 1,  _id: -1 } },
+      { $sort: { isPremium: 1, _id: -1 } },
       {
         $match: {
           subCategory: category,
