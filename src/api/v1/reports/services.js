@@ -20,7 +20,7 @@ exports.addReportServices = async ({ body }) => {
   }
 };
 
-exports.getReportsServices = async ({}) => {
+exports.getReportsServices = async ({page}) => {
   const response = {
     code: 200,
     status: "success",
@@ -29,8 +29,17 @@ exports.getReportsServices = async ({}) => {
   };
 
   try {
+
+    
+
+    const pageNumber = page ? parseInt(page) : 1;
+    const limit = 10;
+    const totalPost = await Reports.countDocuments({});
+
     const reports = await Reports.aggregate([
 	  { $sort: { isRead: 1, _id: -1 } },
+    { $skip: (pageNumber - 1) * limit },
+    { $limit: limit },
       {
         $lookup: {
           from: "users",
@@ -55,7 +64,6 @@ exports.getReportsServices = async ({}) => {
           as: "reporter",
         },
       },
-    
     ]);
 
     if (reports.length === 0) {
@@ -67,6 +75,7 @@ exports.getReportsServices = async ({}) => {
 
     response.data = {
       reports,
+      totalPost
     };
 
     return response;

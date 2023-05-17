@@ -6,6 +6,7 @@ const productSchema = Schema({
   phone: { type: String, trim: true  },
   email: { type: String, trim: true },
   category : { type: String },
+  premiumDay : {type : Number},
   subCategory : { type: String },
   description: { type: String },
   city: { type: String },
@@ -17,7 +18,7 @@ const productSchema = Schema({
   imgTwo: {type : String},
   imgThree: {type : String},
   imgFour: {type : String},
-  posterId : {type: mongoose.Schema.Types.ObjectId},
+  posterId : {type: mongoose.Schema.Types.ObjectId, ref: "User"},
   isDelete : { type : Boolean , default: false },
   isPremium : { type : Boolean }
 },

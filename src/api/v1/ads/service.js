@@ -21,6 +21,7 @@ exports.addAds = async ({ body }) => {
 };
 
 exports.getAds = async (req, res) => {
+
   Ads.find({})
     .select("-__v -isDelete ")
     .sort({ _id: -1 })
@@ -31,6 +32,31 @@ exports.getAds = async (req, res) => {
         res.status(200).json({ ads });
       }
     });
+
+
+    
+};
+
+
+exports.getAdsbyCategory = async (req, res) => {
+  const response = {
+    code: 200,
+    status: "success",
+    message: "Links updated successfully",
+    data: {},
+  };
+
+  const category = req.query.category
+
+  try {
+    const ads = await Ads.find({category : category}).sort({_id : -1}).limit(5)
+
+    res.status(200).json({ads})
+
+  } catch (error) {
+    res.send(error)
+  }
+
 };
 
 exports.updateAds = async ({ id, image, title, link , category }) => {

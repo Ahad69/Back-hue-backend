@@ -266,7 +266,7 @@ exports.getUnApprovedService = async ({ page, size }) => {
   }
 };
 
-exports.getApprovedService = async ({ page }) => {
+exports.getApprovedService = async ({ page, q }) => {
   const response = {
     code: 200,
     status: "success",
@@ -277,36 +277,35 @@ exports.getApprovedService = async ({ page }) => {
   };
 
   try {
+    let query = { isDelete: false };
+
     const totalPost = await Product.countDocuments({});
-
-    const today =  new Date().toDateString()
-
+    const today = new Date().toDateString();
     const todayPost = await Product.find({
-      createdAt : { $gte: today  }}).countDocuments({});
-
-
-
+      createdAt: { $gte: today },
+    }).countDocuments({});
     const pageNumber = page ? parseInt(page) : 1;
     const limit = 10;
 
-    const products = await Product.aggregate([
-      { $sort: { isPremium: -1, _id: -1 } },
-      {
-        $match: {
-          isApproved: true,
-        },
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "posterId",
-          foreignField: "_id",
-          as: "owner",
-        },
-      },
-      { $skip: (pageNumber - 1) * limit },
-      { $limit: limit },
-    ]);
+
+    if (q !== "undefined" || q !== undefined || q) {
+      let regex = new RegExp(q, "i");
+
+      query = {
+        ...query,
+        $or: [
+          { category: regex },
+          { subCategory: regex },
+        ],
+      };
+    }
+
+    const products = await Product.find(query).populate("posterId")
+      .sort({ _id: -1 })
+      .skip((pageNumber - 1) * limit)
+      .limit(limit);
+
+
 
     if (products.length === 0) {
       response.code = 404;
@@ -349,9 +348,8 @@ exports.getAllPosts = async ({ page, category, state }) => {
       cities: { $elemMatch: { $eq: state } },
     }).countDocuments({});
 
-
     const products = await Product.aggregate([
-      { $sort: { isPremium : -1 , _id: -1 } },
+      { $sort: { isPremium: 1,  _id: -1 } },
       {
         $match: {
           subCategory: category,
@@ -369,10 +367,8 @@ exports.getAllPosts = async ({ page, category, state }) => {
       },
       { $skip: (pageNumber - 1) * limit },
       { $limit: limit },
-      { $project: { name: 1, _id: 1, updatedAt: 1 , isPremium : 1 , age : 1} }
+      { $project: { name: 1, _id: 1, updatedAt: 1, isPremium: 1, age: 1 } },
     ]);
-
-
 
     if (products.length === 0) {
       response.code = 404;
@@ -380,7 +376,6 @@ exports.getAllPosts = async ({ page, category, state }) => {
       response.message = "No Product data found";
       return response;
     }
-
 
     response.pages = totalDocs;
     response.data = {
