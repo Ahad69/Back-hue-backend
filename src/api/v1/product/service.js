@@ -21,7 +21,7 @@ const updateDataStatus = async () => {
   });
 };
 
-cron.schedule("*/1 * * * *", () => {
+cron.schedule("0 13 * * *", () => {
   updateDataStatus();
 
 });
