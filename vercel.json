@@ -8,8 +8,8 @@
   ],
   "crons": [
     {
-      "path": "/(.*)",
-      "schedule": "*/1 * * * *"
+      "path": "/api/cron",
+      "schedule": "*/5 * * * *"
     }
   ],
   "routes": [
