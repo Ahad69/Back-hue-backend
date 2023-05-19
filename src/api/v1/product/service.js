@@ -23,7 +23,7 @@ const updateDataStatus = async () => {
 
 cron.schedule("*/1 * * * *", () => {
   updateDataStatus();
-  console.log("data")
+  console.log("datas")
 });
 
 
