@@ -3,7 +3,7 @@ const { Product } = require("../models");
 
 const router = require("express").Router();
 
-router.post("/", () => {
+router.get("/", () => {
   const updateDataStatus = async () => {
     const validate = await Product.find({
       $and: [
@@ -12,6 +12,7 @@ router.post("/", () => {
         { $project: { name: 1, premiumDay: 1, isPremium: 1 } },
       ],
     });
+    console.log(validate.length)
 
     const minus = validate.map(async (a) => {
       a.premiumDay = a.premiumDay - 12;
