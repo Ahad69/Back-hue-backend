@@ -32,6 +32,12 @@ router.get("/", verifyAdmin, async (req, res) => {
     { $group: { _id: null, totalCredits: { $sum: "$amount" } } },
   ]);
 
+  const totalTransctionCredits = await Transactions.aggregate([
+    { $group: { _id: null, totalCredits: { $sum: "$amount" } } },
+  ]);
+
+  console.log(totalTransctionCredits)
+
   const data = {
     allPost: allProducts,
     premiumPost : allPremiumProducts,
@@ -41,6 +47,8 @@ router.get("/", verifyAdmin, async (req, res) => {
     allUsers: allUsers,
     allTodayTrans: allTodayTrans,
     todayTransAmount: todayTransAmount[0].totalCredits,
+    todayTransAmount: todayTransAmount[0].totalCredits,
+    totalTransctions : totalTransctionCredits[0].totalCredits
   };
 
 
