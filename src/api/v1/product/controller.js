@@ -75,7 +75,7 @@ exports.addProduct = async (req, res) => {
       ...req.query,
     });
     if (data.products) {
-      return res.status(code).json({ code, status, message, data , totalPost , todayPost });
+      return res.status(code).json({ code, status, message, data });
     }
     res.status(code).json({ code, status, message });
   };

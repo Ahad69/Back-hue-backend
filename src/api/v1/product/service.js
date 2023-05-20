@@ -282,11 +282,7 @@ exports.getApprovedService = async ({ page, q }) => {
   try {
     let query = { isDelete: false };
 
-    const totalPost = await Product.countDocuments({});
-    const today = new Date().toDateString();
-    const todayPost = await Product.find({
-      createdAt: { $gte: today },
-    }).countDocuments({});
+
     const pageNumber = page ? parseInt(page) : 1;
     const limit = 10;
 
@@ -313,8 +309,7 @@ exports.getApprovedService = async ({ page, q }) => {
     }
 
     // response.postPerMonth = perMonthPost;
-    response.totalPost = totalPost;
-    response.todayPost = todayPost;
+
     response.data = {
       products,
     };

@@ -118,14 +118,16 @@ exports.getUsersService = async (req, res) => {
   const pageNumber = page ? parseInt(page) : 1;
   const limit = 10;
 
-  console.log(page)
-
+ 
 
   const users = await User.find(query)
   .sort({ _id: -1 })
   .skip((pageNumber - 1) * limit)
-  .limit(limit);
+  .limit(limit)
 
+
+  console.log(users)
+  
   res.status(200).json({users, totalDocuments})
   
 };
