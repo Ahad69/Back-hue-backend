@@ -24,7 +24,10 @@ exports.addUserService = async (req, res) => {
   const { firstName, lastName, email, address, password, avater, month } =
     req.body;
   try {
-    User.findOne({ email: email }).exec(async (error, user) => {
+
+    const emails = email.toLowerCase()
+
+    User.findOne({ email: emails }).exec(async (error, user) => {
       if (user)
         return res.status(400).json({
           error: "User already registered",
@@ -35,7 +38,7 @@ exports.addUserService = async (req, res) => {
       const newUser = new User({
         firstName,
         lastName,
-        email,
+        email : emails,
         month,
         avater,
         password: hashedPassword,
@@ -50,11 +53,19 @@ exports.addUserService = async (req, res) => {
   }
 };
 
+
+
 exports.signinUsers = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email: email });
+
+    const emails = email.toLowerCase()
+
+   
+
+    const user = await User.findOne({ email: emails });
+
     if (!user) {
       return res.status(422).json({
         Success: false,
@@ -62,6 +73,8 @@ exports.signinUsers = async (req, res) => {
         message: "User Not Found",
       });
     }
+
+
 
     const isPasswordMatched = await bcrypt.compare(password, user.password);
 
