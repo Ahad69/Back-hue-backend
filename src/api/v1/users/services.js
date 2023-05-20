@@ -126,8 +126,7 @@ exports.getUsersService = async (req, res) => {
   .limit(limit)
 
 
-  console.log(users)
-  
+
   res.status(200).json({users, totalDocuments})
   
 };

@@ -71,11 +71,11 @@ exports.addProduct = async (req, res) => {
 
   // get all Products
   exports.getPosts = async (req, res) => {
-    const { status, code, message, data , totalPost, todayPost} = await getApprovedService({
+    const { status, code, message, data , totalPost} = await getApprovedService({
       ...req.query,
     });
     if (data.products) {
-      return res.status(code).json({ code, status, message, data });
+      return res.status(code).json({ code, status, message, data, totalPost });
     }
     res.status(code).json({ code, status, message });
   };

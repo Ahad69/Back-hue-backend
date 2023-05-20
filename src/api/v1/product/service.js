@@ -294,6 +294,7 @@ exports.getApprovedService = async ({ page, q }) => {
         $or: [{ category: regex }, { subCategory: regex }],
       };
     }
+    const product = await Product.find(query).countDocuments({})
 
     const products = await Product.find(query)
       .populate("posterId")
@@ -308,7 +309,7 @@ exports.getApprovedService = async ({ page, q }) => {
       return response;
     }
 
-    // response.postPerMonth = perMonthPost;
+    response.totalPost = product;
 
     response.data = {
       products,
