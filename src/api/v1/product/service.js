@@ -1,8 +1,5 @@
 const { Product } = require("../models");
 
-
-
-
 // add Products
 exports.addProductService = async ({ body }) => {
   const response = {
@@ -276,15 +273,14 @@ exports.getApprovedService = async ({ page, q }) => {
     message: "Fetch Product list successfully",
     data: {},
     totalPost: 0,
-    todayPost: 0,
   };
 
   try {
     let query = { isDelete: false };
 
-
     const pageNumber = page ? parseInt(page) : 1;
     const limit = 10;
+    const skipCount = (pageNumber - 1) * limit;
 
     if (q !== "undefined" || q !== undefined || q) {
       let regex = new RegExp(q, "i");
@@ -294,12 +290,13 @@ exports.getApprovedService = async ({ page, q }) => {
         $or: [{ category: regex }, { subCategory: regex }],
       };
     }
-    const product = await Product.find(query).countDocuments({})
+
+    const product = await Product.find(query).countDocuments({});
 
     const products = await Product.find(query)
       .populate("posterId")
       .sort({ _id: -1 })
-      .skip((pageNumber - 1) * limit)
+      .skip(skipCount)
       .limit(limit);
 
     if (products.length === 0) {
