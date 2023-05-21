@@ -46,9 +46,9 @@ router.get("/", verifyAdmin, async (req, res) => {
     allCredits: allCredits[0].totalCredits,
     allUsers: allUsers,
     allTodayTrans: allTodayTrans,
-    todayTransAmount: todayTransAmount[0]?.totalCredits,
-    todayTransAmount: todayTransAmount[0]?.totalCredits,
-    totalTransctions : totalTransctionCredits[0]?.totalCredits
+    todayTransAmount: todayTransAmount[0]?.totalCredits ? todayTransAmount[0]?.totalCredits  : 0,
+    todayTransAmount: todayTransAmount[0]?.totalCredits ? todayTransAmount[0]?.totalCredits  : 0,
+    totalTransctions : totalTransctionCredits[0]?.totalCredits ? totalTransctionCredits[0]?.totalCredits : 0
   };
 
 
