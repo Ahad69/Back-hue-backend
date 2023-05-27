@@ -49,7 +49,7 @@ exports.getBlogsServices = async ({ q, page }) => {
 
     const pageNumber = page ? parseInt(page) : 1;
     const limit = 6;
-    const totalBlogs = await Blogs.countDocuments({},{ maxTimeMS: 20000 });
+    const totalBlogs = await Blogs.find(query).countDocuments({},{ maxTimeMS: 20000 });
 
     const blogs = await Blogs.find(query)
       .sort({ _id: -1 })
