@@ -45,16 +45,14 @@ exports.getBlogsServices = async ({ q, page }) => {
       };
     }
 
-
     const pageNumber = page ? parseInt(page) : 1;
     const limit = 6;
-    const totalBlogs = await Blogs.countDocuments({});
+    const totalBlogs = await Blogs.find(query).countDocuments({});
 
     const blogs = await Blogs.find(query)
       .sort({ _id: -1 })
       .skip((pageNumber - 1) * limit)
       .limit(limit);
-
 
     if (blogs.length === 0) {
       response.code = 404;
@@ -64,8 +62,7 @@ exports.getBlogsServices = async ({ q, page }) => {
     }
 
 
-
-    response.page = q ? blogs.length  : totalBlogs;
+    response.page = totalBlogs;
     response.data = {
       blogs,
     };

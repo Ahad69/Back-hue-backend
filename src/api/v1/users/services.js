@@ -49,6 +49,7 @@ exports.addUserService = async (req, res) => {
       return res.status(201).json({ message: "success", newUser });
     });
   } catch (error) {
+    
     res.status(500).json({ message: "Invalid" });
   }
 };
