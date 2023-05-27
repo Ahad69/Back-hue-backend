@@ -45,6 +45,8 @@ exports.getBlogsServices = async ({ q, page }) => {
       };
     }
 
+    console.log(q)
+
     const pageNumber = page ? parseInt(page) : 1;
     const limit = 6;
     const totalBlogs = await Blogs.find(query).countDocuments({});
@@ -72,7 +74,7 @@ exports.getBlogsServices = async ({ q, page }) => {
     console.log(error);
     response.code = 500;
     response.status = "failed";
-    response.message = "Error. Try again a";
+    response.message = "Error. Try again";
     return response;
   }
 };
