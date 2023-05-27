@@ -45,11 +45,11 @@ exports.getBlogsServices = async ({ q, page }) => {
       };
     }
 
- 
+  
 
     const pageNumber = page ? parseInt(page) : 1;
     const limit = 6;
-    const totalBlogs = await Blogs.countDocuments({});
+    const totalBlogs = await Blogs.find(query).countDocuments({});
 
     const blogs = await Blogs.find(query)
       .sort({ _id: -1 })
@@ -71,7 +71,7 @@ exports.getBlogsServices = async ({ q, page }) => {
 
     return response;
   } catch (error) {
-    console.log(error);
+    console.log(error.message);
     response.code = 500;
     response.status = "failed";
     response.message = "Error. Try again";
