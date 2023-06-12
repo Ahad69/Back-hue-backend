@@ -95,9 +95,7 @@ exports.getBlogsServices = async ({ q, page, cat }) => {
 
     // const totalBlogs = await Blogs.countDocuments({}, { maxTimeMS: 20000 });
     const totalBlogs = await Blogs.find(forPage).countDocuments({});
-
     response.page = totalBlogs;
-
     response.data = {
       blogs,
     };
