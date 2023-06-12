@@ -20,7 +20,7 @@ exports.addBlogServices = async ({ body }) => {
   }
 };
 
-exports.getBlogsServices = async ({ q, page }) => {
+exports.getBlogsServices = async ({ q, page, cat }) => {
   const response = {
     code: 200,
     status: "success",
@@ -29,32 +29,62 @@ exports.getBlogsServices = async ({ q, page }) => {
     page: 0,
   };
 
+  const regex = new RegExp(q, "i");
+  const catregex = new RegExp(cat, "i");
+
+  console.log(cat);
+
   try {
-    let query = { isDelete: false };
-    if (q !== "undefined" || q !== undefined || q) {
-      let regex = new RegExp(q, "i");
-
-      query = {
-        ...query,
-        $or: [
-          { category: regex },
-          { title: regex },
-          { permalink: regex },
-          { subCategory: regex },
-        ],
-      };
-    }
-
-    
-
     const pageNumber = page ? parseInt(page) : 1;
     const limit = 6;
-    const totalBlogs = await Blogs.countDocuments({},{ maxTimeMS: 20000 });
+    const skipCount = (pageNumber - 1) * limit;
 
-    const blogs = await Blogs.find(query)
-      .sort({ _id: -1 })
-      .skip((pageNumber - 1) * limit)
-      .limit(limit);
+    let forPage = {};
+    if (q && cat) {
+      forPage = {
+        category: catregex,
+        title: regex,
+      };
+    } else if (q) {
+      forPage = { title: regex };
+    } else if (cat) {
+      forPage = { category: catregex };
+    } else {
+      forPage = {};
+    }
+
+    let matchStage = {};
+    if (q && cat) {
+      matchStage.$match = {
+        category: catregex,
+        title: regex,
+      };
+    } else if (q) {
+      matchStage.$match = { title: regex };
+    } else if (cat) {
+      matchStage.$match = { category: catregex };
+    } else {
+      matchStage.$match = {};
+    }
+
+    const blogs = await Blogs.aggregate([
+      matchStage,
+      {
+        $sort: { _id: -1 },
+      },
+      { $skip: skipCount },
+      {
+        $limit: limit,
+      },
+      {
+        $project: {
+          permalink: 1,
+          title: 1,
+          category: 1,
+          image: 1,
+        },
+      },
+    ]);
 
     if (blogs.length === 0) {
       response.code = 404;
@@ -63,8 +93,11 @@ exports.getBlogsServices = async ({ q, page }) => {
       return response;
     }
 
+    // const totalBlogs = await Blogs.countDocuments({}, { maxTimeMS: 20000 });
+    const totalBlogs = await Blogs.find(forPage).countDocuments({});
 
     response.page = totalBlogs;
+
     response.data = {
       blogs,
     };
