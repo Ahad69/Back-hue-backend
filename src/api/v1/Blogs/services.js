@@ -31,9 +31,6 @@ exports.getBlogsServices = async ({ q, page, cat }) => {
 
   const regex = new RegExp(q, "i");
   const catregex = new RegExp(cat, "i");
-
-  console.log(cat);
-
   try {
     const pageNumber = page ? parseInt(page) : 1;
     const limit = 6;
@@ -82,6 +79,131 @@ exports.getBlogsServices = async ({ q, page, cat }) => {
           title: 1,
           category: 1,
           image: 1,
+        },
+      },
+    ]);
+
+    if (blogs.length === 0) {
+      response.code = 404;
+      response.status = "failded";
+      response.message = "No Product data found";
+      return response;
+    }
+
+    // const totalBlogs = await Blogs.countDocuments({}, { maxTimeMS: 20000 });
+    const totalBlogs = await Blogs.find(forPage).countDocuments({});
+    response.page = totalBlogs;
+    response.data = {
+      blogs,
+    };
+
+    return response;
+  } catch (error) {
+    console.log(error);
+    response.code = 500;
+    response.status = "failed";
+    response.message = "Error. Try again";
+    return response;
+  }
+};
+
+exports.getBlogsAdminServices = async ({ q, page, cat, subCat }) => {
+  const response = {
+    code: 200,
+    status: "success",
+    message: "Fetch Blog list successfully",
+    data: {},
+    page: 0,
+  };
+
+  const regex = new RegExp(q, "i");
+  const catregex = new RegExp(cat, "i");
+  try {
+    const pageNumber = page ? parseInt(page) : 1;
+    const limit = 6;
+    const skipCount = (pageNumber - 1) * limit;
+
+    let forPage = {};
+    if (q && cat && subCat) {
+      forPage = {
+        category: catregex,
+        title: regex,
+        subCategory: subCat,
+      };
+    } else if (q && cat) {
+      forPage = {
+        category: catregex,
+        title: regex,
+      };
+    } else if (q && subCat) {
+      forPage = {
+        title: regex,
+        subCategory: subCat,
+      };
+    } else if (cat && subCat) {
+      forPage = {
+        category: catregex,
+        subCategory: subCat,
+      };
+    } else if (q) {
+      forPage = { title: regex };
+    } else if (cat) {
+      forPage = { category: catregex };
+    } else if (subCat) {
+      forPage = { subCategory: subCat };
+    } else {
+      forPage = {};
+    }
+
+    let matchStage = {};
+    if (q && cat && subCat) {
+      matchStage.$match = {
+        category: catregex,
+        title: regex,
+        subCategory: subCat,
+      };
+    } else if (q && cat) {
+      matchStage.$match = {
+        category: catregex,
+        title: regex,
+      };
+    } else if (q && subCat) {
+      matchStage.$match = {
+        title: regex,
+        subCategory: subCat,
+      };
+    } else if (cat && subCat) {
+      matchStage.$match = {
+        category: catregex,
+        subCategory: subCat,
+      };
+    } else if (q) {
+      matchStage.$match = { title: regex };
+    } else if (cat) {
+      matchStage.$match = { category: catregex };
+    } else if (subCat) {
+      matchStage.$match = { subCategory: subCat };
+    } else {
+      matchStage.$match = {};
+    }
+
+    const blogs = await Blogs.aggregate([
+      matchStage,
+      {
+        $sort: { _id: -1 },
+      },
+      { $skip: skipCount },
+      {
+        $limit: limit,
+      },
+      {
+        $project: {
+          title: 1,
+          category: 1,
+          status: 1,
+          writer: 1,
+          subCategory: 1,
+          createdAt: 1,
         },
       },
     ]);

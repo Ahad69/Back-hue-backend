@@ -1,10 +1,13 @@
-const { addBlogServices, getBlogsServices, updateBlogServices , deleteBlogServices, singleBlogServices } = require("./services");
-
-
-
+const {
+  addBlogServices,
+  getBlogsServices,
+  updateBlogServices,
+  deleteBlogServices,
+  singleBlogServices,
+  getBlogsAdminServices,
+} = require("./services");
 
 exports.addBlog = async (req, res) => {
-
   const { status, code, message } = await addBlogServices({
     body: req.body,
     ...req.body,
@@ -12,50 +15,52 @@ exports.addBlog = async (req, res) => {
   res.status(code).json({ code, status, message });
 };
 
-exports.getBlog = async(req , res)=>{
-  const {status , code , message, data, page} = await getBlogsServices({
+exports.getBlog = async (req, res) => {
+  const { status, code, message, data, page } = await getBlogsServices({
     ...req.query,
   });
   if (data.blogs) {
     return res.status(code).json({ code, status, message, data, page });
   }
   res.status(code).json({ code, status, message });
-}
+};
 
+exports.getBlogAdmin = async (req, res) => {
+  const { status, code, message, data, page } = await getBlogsAdminServices({
+    ...req.query,
+  });
+  if (data.blogs) {
+    return res.status(code).json({ code, status, message, data, page });
+  }
+  res.status(code).json({ code, status, message });
+};
 
-
-exports.singleBlog = async(req , res)=>{
-  const {status , code , message, data} = await singleBlogServices({
+exports.singleBlog = async (req, res) => {
+  const { status, code, message, data } = await singleBlogServices({
     ...req.query,
   });
   if (data) {
     return res.status(code).json({ code, status, message, data });
   }
   res.status(code).json({ code, status, message });
-}
+};
 
+// update Blogs
+exports.updateBlogs = async (req, res) => {
+  const { status, code, message, data } = await updateBlogServices({
+    ...req.params,
+    ...req.body,
+  });
+  if (data.blog) {
+    return res.status(code).json({ code, status, message, data });
+  }
+  res.status(code).json({ code, status, message });
+};
 
-  // update Blogs
-  exports.updateBlogs = async (req, res) => {
-    const { status, code, message, data } = await updateBlogServices({
-      ...req.params,
-      ...req.body,
-    });
-    if (data.blog) {
-      return res.status(code).json({ code, status, message, data });
-    }
-    res.status(code).json({ code, status, message });
-  };
-  
-
-  // update Blogs
-  exports.deleteBlog = async (req, res) => {
-    const { status, code, message } = await deleteBlogServices({
-      ...req.params,
-    });
-    res.status(code).json({ code, status, message });
-  };
-  
-
-  
-
+// update Blogs
+exports.deleteBlog = async (req, res) => {
+  const { status, code, message } = await deleteBlogServices({
+    ...req.params,
+  });
+  res.status(code).json({ code, status, message });
+};
