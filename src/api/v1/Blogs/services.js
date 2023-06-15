@@ -261,6 +261,35 @@ exports.singleBlogServices = async ({ q }) => {
   }
 };
 
+exports.singleBlogByIdServices = async ({ id }) => {
+  const response = {
+    code: 200,
+    status: "success",
+    message: "Fetch Blog list successfully",
+    data: {},
+  };
+
+  try {
+    const blog = await Blogs.findOne({ _id: id });
+    if (!blog) {
+      response.code = 404;
+      response.status = "failed";
+      response.message = "Error. Try again";
+      return response;
+    }
+
+    response.data = { blog };
+
+    return response;
+  } catch (error) {
+    console.log(error);
+    response.code = 500;
+    response.status = "failed";
+    response.message = "Error. Try again a";
+    return response;
+  }
+};
+
 // update blogs
 exports.updateBlogServices = async ({
   id,

@@ -5,6 +5,7 @@ const {
   deleteBlogServices,
   singleBlogServices,
   getBlogsAdminServices,
+  singleBlogByIdServices,
 } = require("./services");
 
 exports.addBlog = async (req, res) => {
@@ -38,6 +39,15 @@ exports.getBlogAdmin = async (req, res) => {
 exports.singleBlog = async (req, res) => {
   const { status, code, message, data } = await singleBlogServices({
     ...req.query,
+  });
+  if (data) {
+    return res.status(code).json({ code, status, message, data });
+  }
+  res.status(code).json({ code, status, message });
+};
+exports.singleBlogById = async (req, res) => {
+  const { status, code, message, data } = await singleBlogByIdServices({
+    ...req.params,
   });
   if (data) {
     return res.status(code).json({ code, status, message, data });

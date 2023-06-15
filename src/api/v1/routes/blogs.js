@@ -6,6 +6,7 @@ const {
   deleteBlog,
   singleBlog,
   getBlogAdmin,
+  singleBlogById,
 } = require("../Blogs/controllers");
 const {
   deleteMany,
@@ -19,6 +20,7 @@ router.post("/", verifyAdmin, addBlog);
 router.get("/", getBlog);
 router.get("/admin", getBlogAdmin);
 router.get("/single", singleBlog);
+router.get("/:id", verifyAdmin, singleBlogById);
 router.patch("/:id", verifyAdmin, updateBlogs);
 router.delete("/:id", verifyAdmin, deleteBlog);
 router.post("/deleteMany", deleteMany);
