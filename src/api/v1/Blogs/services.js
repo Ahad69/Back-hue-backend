@@ -12,7 +12,6 @@ exports.addBlogServices = async ({ body }) => {
     await newProduct.save();
     return response;
   } catch (error) {
-    console.log(error);
     response.code = 500;
     response.status = "failed";
     response.message = "Error. Try again";
