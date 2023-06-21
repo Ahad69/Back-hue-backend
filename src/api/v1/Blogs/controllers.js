@@ -6,6 +6,7 @@ const {
   singleBlogServices,
   getBlogsAdminServices,
   singleBlogByIdServices,
+  getBlogsForSitemap,
 } = require("./services");
 
 exports.addBlog = async (req, res) => {
@@ -21,6 +22,15 @@ exports.getBlog = async (req, res) => {
     ...req.query,
   });
   if (data.blogs) {
+    return res.status(code).json({ code, status, message, data, page });
+  }
+  res.status(code).json({ code, status, message });
+};
+exports.getSitemap = async (req, res) => {
+  const { status, code, message, data, page } = await getBlogsForSitemap({
+    ...req.query,
+  });
+  if (data) {
     return res.status(code).json({ code, status, message, data, page });
   }
   res.status(code).json({ code, status, message });

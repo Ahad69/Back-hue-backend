@@ -20,6 +20,27 @@ exports.addBlogServices = async ({ body }) => {
   }
 };
 
+exports.getBlogsForSitemap = async () => {
+  const response = {
+    code: 201,
+    status: "success",
+    message: "Blog added successfully",
+    data: {},
+  };
+  try {
+    const blogs = await Blogs.find({}, "permalink");
+    console.log(blogs.length);
+    response.data = blogs;
+    return response;
+  } catch (error) {
+    console.log(error);
+    response.code = 500;
+    response.status = "failed";
+    response.message = "Error. Try again";
+    return response;
+  }
+};
+
 exports.getBlogsServices = async ({ q, page, cat }) => {
   const response = {
     code: 200,

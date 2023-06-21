@@ -7,6 +7,7 @@ const {
   singleBlog,
   getBlogAdmin,
   singleBlogById,
+  getSitemap,
 } = require("../Blogs/controllers");
 const {
   deleteMany,
@@ -18,6 +19,7 @@ const router = express.Router();
 
 router.post("/", verifyAdmin, addBlog);
 router.get("/", getBlog);
+router.get("/sitemap", getSitemap);
 router.get("/admin", getBlogAdmin);
 router.get("/single", singleBlog);
 router.get("/:id", verifyAdmin, singleBlogById);
