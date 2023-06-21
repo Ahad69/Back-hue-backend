@@ -17,10 +17,9 @@ const {
   updateManyById,
   getAllPost,
   getAdminPosterPost,
+  getPostsSitemap,
 } = require("../product/controller");
 const { updateApproveMany, deleteMany } = require("../product/service");
-
-
 
 router.post("/", verifyToken, addProduct);
 
@@ -28,16 +27,17 @@ router.patch("/:id", updateProduct);
 
 router.get("/admin", verifyAdmin, getAdminPost);
 
+router.get("/sitemap", getPostsSitemap);
+
 router.patch("/approved/:id", verifyAdmin, updateApprove);
 
 router.post("/many", updateApproveMany);
 
-router.post("/deleteMany",  deleteMany);
+router.post("/deleteMany", deleteMany);
 
 router.get("/", getPosts);
 
 router.get("/all", getAllPost);
-
 
 router.delete("/:id", deleteProduct);
 

@@ -266,6 +266,28 @@ exports.getUnApprovedService = async ({ page, size }) => {
   }
 };
 
+exports.getPostForSitemap = async () => {
+  const response = {
+    code: 200,
+    status: "success",
+    message: "Product added successfully",
+    data: {},
+  };
+
+  try {
+    const posts = await Product.find({}, "category");
+
+    response.data = posts;
+    return response;
+  } catch (error) {
+    console.log(error);
+    response.code = 500;
+    response.status = "failed";
+    response.message = "Error. Try again";
+    return response;
+  }
+};
+
 exports.getApprovedService = async ({ page, q }) => {
   const response = {
     code: 200,
