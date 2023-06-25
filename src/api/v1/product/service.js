@@ -1,4 +1,301 @@
-const { Product } = require("../models");
+const { default: mongoose } = require("mongoose");
+const { Product, User } = require("../models");
+
+const moment = require("moment/moment");
+
+// for today
+const startOfDay = moment().startOf("day");
+const endOfDay = moment().endOf("day");
+// for yesterday
+const today = moment();
+const yesterday = moment().subtract(1, "days");
+
+// last 3 days
+const threeDaysAgo = moment().subtract(2, "days");
+// last 7 days
+const sevenDaysAgo = moment().subtract(6, "days");
+// for this month
+const startOfMonth = moment().startOf("month");
+const endOfMonth = moment().endOf("month");
+// last month
+const currentMonthStartDate = moment().startOf("month");
+const lastMonthStartDate = moment(currentMonthStartDate)
+  .subtract(1, "months")
+  .startOf("month");
+// last 6 month
+const sixMonthsAgo = moment().subtract(6, "months");
+
+// this year
+const startOfYear = moment().startOf("year");
+const endOfYear = moment().endOf("year");
+// last year
+const startOfPreviousYear = moment().subtract(1, "year").startOf("year");
+const endOfPreviousYear = moment().subtract(1, "year").endOf("year");
+
+exports.getApprovedService = async ({
+  page,
+  cat,
+  subCat,
+  date,
+  searchText,
+}) => {
+  const response = {
+    code: 200,
+    status: "success",
+    message: "Fetch Product list successfully",
+    data: {},
+    totalPost: 0,
+    startIndex: 0,
+  };
+
+  const regex = new RegExp(cat, "i");
+  const subRegex = new RegExp(subCat, "i");
+
+  try {
+    const pageNumber = page ? parseInt(page) : 1;
+    const limit = 10;
+    const skipCount = (pageNumber - 1) * limit;
+
+    let newDate;
+    if (date == "today") {
+      newDate = {
+        $gte: startOfDay.toDate(),
+        $lte: endOfDay.toDate(),
+      };
+    }
+    if (date == "yesterday") {
+      newDate = {
+        $gte: yesterday.startOf("day").toDate(),
+        $lt: today.startOf("day").toDate(),
+      };
+    }
+    if (date == "last3days") {
+      newDate = {
+        $gte: threeDaysAgo.startOf("day").toDate(),
+      };
+    }
+    if (date == "last3days") {
+      newDate = {
+        $gte: sevenDaysAgo.startOf("day").toDate(),
+      };
+    }
+
+    if (date == "thismonth") {
+      newDate = {
+        $gte: startOfMonth.toDate(),
+        $lte: endOfMonth.toDate(),
+      };
+    }
+    if (date == "lastmonth") {
+      newDate = {
+        $gte: lastMonthStartDate.toDate(),
+        $lt: currentMonthStartDate.toDate(),
+      };
+    }
+    if (date == "last6month") {
+      newDate = {
+        $gte: sixMonthsAgo.toDate(),
+        $lt: today.startOf("day").toDate(),
+      };
+    }
+    if (date == "thisYear") {
+      newDate = {
+        $gte: startOfYear.toDate(),
+        $lt: endOfYear.startOf("day").toDate(),
+      };
+    }
+    if (date == "lastYear") {
+      newDate = {
+        $gte: startOfPreviousYear.toDate(),
+        $lt: endOfPreviousYear.startOf("day").toDate(),
+      };
+    }
+
+    const userData = await User.findOne({ email: searchText });
+    const user = userData?._id?.toString();
+
+    let forPage = {};
+
+    if (cat && subCat && newDate && searchText) {
+      forPage = {
+        category: regex,
+        subCategory: subRegex,
+        createdAt: newDate,
+        posterId: mongoose.Types.ObjectId(user),
+      };
+    } else if (cat && subCat && searchText) {
+      forPage = {
+        category: regex,
+        subCategory: subRegex,
+        posterId: mongoose.Types.ObjectId(user),
+      };
+    } else if (cat && newDate && searchText) {
+      forPage = {
+        category: regex,
+        createdAt: newDate,
+        posterId: mongoose.Types.ObjectId(user),
+      };
+    } else if (newDate && subCat && searchText) {
+      forPage = {
+        createdAt: newDate,
+        subCategory: subRegex,
+        posterId: mongoose.Types.ObjectId(user),
+      };
+    } else if (newDate && searchText) {
+      forPage = {
+        createdAt: newDate,
+        posterId: mongoose.Types.ObjectId(user),
+      };
+    } else if (cat && searchText) {
+      forPage = {
+        category: regex,
+        posterId: mongoose.Types.ObjectId(user),
+      };
+    } else if (subCat && searchText) {
+      forPage = {
+        subCategory: subRegex,
+        posterId: mongoose.Types.ObjectId(user),
+      };
+    } else if (searchText) {
+      forPage = { posterId: mongoose.Types.ObjectId(user) };
+    } else if (cat && subCat && newDate) {
+      forPage = {
+        category: regex,
+        subCategory: subRegex,
+        createdAt: newDate,
+      };
+    } else if (cat && subCat) {
+      forPage = {
+        category: regex,
+        subCategory: subRegex,
+      };
+    } else if (cat && newDate) {
+      forPage = {
+        category: regex,
+        createdAt: newDate,
+      };
+    } else if (newDate && subCat) {
+      forPage = {
+        createdAt: newDate,
+        subCategory: subRegex,
+      };
+    } else if (newDate) {
+      forPage = { createdAt: newDate };
+    } else if (cat) {
+      forPage = { category: regex };
+    } else if (subCat) {
+      forPage = { subCategory: subRegex };
+    } else {
+      forPage = {};
+    }
+
+    const matchStage = {};
+    if (cat && subCat && newDate && searchText) {
+      matchStage.$match = {
+        category: regex,
+        subCategory: subRegex,
+        createdAt: newDate,
+        posterId: mongoose.Types.ObjectId(user),
+      };
+    } else if (cat && subCat && searchText) {
+      matchStage.$match = {
+        category: regex,
+        subCategory: subRegex,
+        posterId: mongoose.Types.ObjectId(user),
+      };
+    } else if (cat && newDate && searchText) {
+      matchStage.$match = {
+        category: regex,
+        createdAt: newDate,
+        posterId: mongoose.Types.ObjectId(user),
+      };
+    } else if (newDate && subCat && searchText) {
+      matchStage.$match = {
+        createdAt: newDate,
+        subCategory: subRegex,
+        posterId: mongoose.Types.ObjectId(user),
+      };
+    } else if (newDate && searchText) {
+      matchStage.$match = {
+        createdAt: newDate,
+        posterId: mongoose.Types.ObjectId(user),
+      };
+    } else if (cat && searchText) {
+      matchStage.$match = {
+        category: regex,
+        posterId: mongoose.Types.ObjectId(user),
+      };
+    } else if (subCat && searchText) {
+      matchStage.$match = {
+        subCategory: subRegex,
+        posterId: mongoose.Types.ObjectId(user),
+      };
+    } else if (searchText) {
+      matchStage.$match = { posterId: mongoose.Types.ObjectId(user) };
+    } else if (cat && subCat && newDate) {
+      matchStage.$match = {
+        category: regex,
+        subCategory: subRegex,
+        createdAt: newDate,
+      };
+    } else if (cat && subCat) {
+      matchStage.$match = {
+        category: regex,
+        subCategory: subRegex,
+      };
+    } else if (cat && newDate) {
+      matchStage.$match = {
+        category: regex,
+        createdAt: newDate,
+      };
+    } else if (newDate && subCat) {
+      matchStage.$match = {
+        createdAt: newDate,
+        subCategory: subRegex,
+      };
+    } else if (newDate) {
+      matchStage.$match = { createdAt: newDate };
+    } else if (cat) {
+      matchStage.$match = { category: regex };
+    } else if (subCat) {
+      matchStage.$match = { subCategory: subRegex };
+    } else {
+      matchStage.$match = {};
+    }
+
+    const posts = await Product.aggregate([
+      matchStage,
+      {
+        $sort: { createdAt: -1 },
+      },
+      { $skip: skipCount },
+      {
+        $limit: limit,
+      },
+      {
+        $project: {
+          category: 1,
+          name: 1,
+          subCategory: 1,
+          createdAt: 1,
+          isPremium: 1,
+          cityCount: { $size: "$cities" },
+        },
+      },
+    ]);
+
+    response.totalPost = await Product.find(forPage).countDocuments({});
+    response.startIndex = skipCount + 1;
+    response.data = posts;
+    return response;
+  } catch (error) {
+    console.log(error);
+    response.code = 500;
+    response.status = "failed";
+    response.message = "Error. Try again a";
+    return response;
+  }
+};
 
 // add Products
 exports.addProductService = async ({ body }) => {
@@ -284,62 +581,6 @@ exports.getPostForSitemap = async () => {
     response.code = 500;
     response.status = "failed";
     response.message = "Error. Try again";
-    return response;
-  }
-};
-
-exports.getApprovedService = async ({ page, q }) => {
-  const response = {
-    code: 200,
-    status: "success",
-    message: "Fetch Product list successfully",
-    data: {},
-    totalPost: 0,
-  };
-
-  try {
-    let query = { isDelete: false };
-
-    const pageNumber = page ? parseInt(page) : 1;
-    const limit = 10;
-    const skipCount = (pageNumber - 1) * limit;
-
-    if (q !== "undefined" || q !== undefined || q) {
-      let regex = new RegExp(q, "i");
-
-      query = {
-        ...query,
-        $or: [{ category: regex }, { subCategory: regex }],
-      };
-    }
-
-    const product = await Product.find(query).countDocuments({});
-
-    const products = await Product.find(query)
-      .populate("posterId")
-      .sort({ _id: -1 })
-      .skip(skipCount)
-      .limit(limit);
-
-    if (products.length === 0) {
-      response.code = 404;
-      response.status = "failded";
-      response.message = "No Product data found";
-      return response;
-    }
-
-    response.totalPost = product;
-
-    response.data = {
-      products,
-    };
-
-    return response;
-  } catch (error) {
-    console.log(error);
-    response.code = 500;
-    response.status = "failed";
-    response.message = "Error. Try again a";
     return response;
   }
 };

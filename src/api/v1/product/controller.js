@@ -82,11 +82,14 @@ exports.getAdminPost = async (req, res) => {
 
 // get all Products
 exports.getPosts = async (req, res) => {
-  const { status, code, message, data, totalPost } = await getApprovedService({
-    ...req.query,
-  });
-  if (data.products) {
-    return res.status(code).json({ code, status, message, data, totalPost });
+  const { status, code, message, data, totalPost, startIndex } =
+    await getApprovedService({
+      ...req.query,
+    });
+  if (data) {
+    return res
+      .status(code)
+      .json({ code, status, message, data, totalPost, startIndex });
   }
   res.status(code).json({ code, status, message });
 };
