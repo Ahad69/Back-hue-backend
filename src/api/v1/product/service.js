@@ -114,6 +114,8 @@ exports.getApprovedService = async ({
     const userData = await User.findOne({ email: searchText });
     const user = userData?._id?.toString();
 
+    console.log(user);
+
     let forPage = {};
 
     if (cat && subCat && newDate && searchText) {
@@ -279,7 +281,18 @@ exports.getApprovedService = async ({
           subCategory: 1,
           createdAt: 1,
           isPremium: 1,
-          cityCount: { $size: "$cities" },
+          cityCount: {
+            $cond: {
+              if: {
+                $and: [
+                  { $isArray: "$cities" },
+                  { $ne: [{ $size: "$cities" }, 0] },
+                ],
+              },
+              then: { $size: "$cities" },
+              else: 0,
+            },
+          },
         },
       },
     ]);
