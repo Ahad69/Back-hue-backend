@@ -128,12 +128,15 @@ exports.searchProduct = async (req, res) => {
 
 // get one Products
 exports.getPosterPost = async (req, res) => {
-  const { status, code, message, data, pages } = await getOnlyUserPosts({
-    ...req.params,
-    ...req.query,
-  });
+  const { status, code, message, data, pages, startIndex } =
+    await getOnlyUserPosts({
+      ...req.params,
+      ...req.query,
+    });
   if (data) {
-    return res.status(code).json({ code, status, message, data, pages });
+    return res
+      .status(code)
+      .json({ code, status, message, data, pages, startIndex });
   }
   res.status(code).json({ code, status, message });
 };
