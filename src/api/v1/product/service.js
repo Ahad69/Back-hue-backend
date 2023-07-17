@@ -819,7 +819,15 @@ exports.getOnlyUserPosts = async ({
       { $sort: { _id: -1 } },
       { $skip: skipCount },
       { $limit: limit },
-      { $project: { name: 1, isPremium: 1, category: 1, subCategory: 1 } },
+      {
+        $project: {
+          name: 1,
+          isPremium: 1,
+          category: 1,
+          subCategory: 1,
+          createdAt: 1,
+        },
+      },
     ]);
 
     if (posts.length == 0) {
