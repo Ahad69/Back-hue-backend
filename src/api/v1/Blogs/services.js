@@ -121,6 +121,18 @@ exports.getBlogsServices = async ({ q, page, cat }) => {
       },
     ]);
 
+    for (const blog of blogs) {
+      if (!blog.image.includes("imagekit")) {
+        const getObjectParams = {
+          Bucket: bucket_Name,
+          Key: blog.image,
+        };
+        const command = new GetObjectCommand(getObjectParams);
+        const url = await getSignedUrl(s3, command);
+        blog.image = url;
+      }
+    }
+
     if (blogs.length === 0) {
       response.code = 404;
       response.status = "failded";
@@ -287,6 +299,18 @@ exports.singleBlogServices = async ({ q }) => {
       return response;
     }
 
+    for (const blog of blogs) {
+      if (!blog.image.includes("imagekit")) {
+        const getObjectParams = {
+          Bucket: bucket_Name,
+          Key: blog.image,
+        };
+        const command = new GetObjectCommand(getObjectParams);
+        const url = await getSignedUrl(s3, command);
+        blog.image = url;
+      }
+    }
+
     response.data = { blogs };
 
     return response;
@@ -308,13 +332,25 @@ exports.singleBlogByIdServices = async ({ id }) => {
   };
 
   try {
-    const blogs = await Blogs.findOne({ _id: id });
+    const blogs = await Blogs.find({ _id: id });
 
     if (!blogs) {
       response.code = 404;
       response.status = "failed";
       response.message = "Error. Try again";
       return response;
+    }
+
+    for (const blog of blogs) {
+      if (!blog.image.includes("imagekit")) {
+        const getObjectParams = {
+          Bucket: bucket_Name,
+          Key: blog.image,
+        };
+        const command = new GetObjectCommand(getObjectParams);
+        const url = await getSignedUrl(s3, command);
+        blog.image = url;
+      }
     }
 
     response.data = { blogs };

@@ -1,5 +1,23 @@
 const { default: mongoose } = require("mongoose");
 const { Product, User } = require("../models");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+const {
+  S3Client,
+  GetObjectCommand,
+  DeleteObjectCommand,
+} = require("@aws-sdk/client-s3");
+
+const bucket_Name = process.env.BUCKET_NAME;
+const bucket_Region = process.env.BUCKET_REGION;
+const access_Key = process.env.ACCESS_KEY;
+const secret_Access = process.env.SECRET_ACCESS;
+const s3 = new S3Client({
+  credentials: {
+    accessKeyId: access_Key,
+    secretAccessKey: secret_Access,
+  },
+  region: bucket_Region,
+});
 
 const moment = require("moment/moment");
 
@@ -907,8 +925,10 @@ exports.getProductService = async ({ id }) => {
     data: {},
   };
 
+  console.log(id);
+
   try {
-    response.data.product = await Product.aggregate([
+    const products = await Product.aggregate([
       { $match: { $expr: { $eq: ["$_id", { $toObjectId: `${id}` }] } } },
       {
         $lookup: {
@@ -920,12 +940,31 @@ exports.getProductService = async ({ id }) => {
       },
     ]);
 
-    if (!response.data.product) {
+    if (!products?.[0].imgOne) {
+      response.data.product = products;
+      return response;
+    }
+
+    for (const blog of products) {
+      if (!blog.imgOne.includes("imagekit")) {
+        const getObjectParams = {
+          Bucket: bucket_Name,
+          Key: blog.imgOne,
+        };
+        const command = new GetObjectCommand(getObjectParams);
+        const url = await getSignedUrl(s3, command);
+        blog.imgOne = url;
+      }
+    }
+
+    if (!products) {
       response.code = 404;
       response.status = "failed";
       response.message = "No Product found";
       return response;
     }
+
+    response.data.product = products;
 
     return response;
   } catch (error) {

@@ -25,6 +25,8 @@ const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 router.post("/files", upload.single("images"), async (req, res) => {
+  console.log(req.file);
+
   const fileExtention = path.extname(req.file.originalname);
   const fileName =
     req.file.originalname
@@ -45,13 +47,6 @@ router.post("/files", upload.single("images"), async (req, res) => {
 
   await s3.send(command);
 
-  const getObjectParams = {
-    Bucket: bucket_Name,
-    Key: fileName,
-  };
-  const command2 = new GetObjectCommand(getObjectParams);
-  const url = await getSignedUrl(s3, command2);
-
-  res.send({ url: url });
+  res.send({ url: fileName });
 });
 module.exports = router;

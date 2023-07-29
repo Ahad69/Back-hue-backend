@@ -22,7 +22,7 @@ router.get("/", getBlog);
 router.get("/sitemap", getSitemap);
 router.get("/admin", getBlogAdmin);
 router.get("/single", singleBlog);
-router.get("/:id", verifyAdmin, singleBlogById);
+router.get("/:id", singleBlogById);
 router.patch("/:id", verifyAdmin, updateBlogs);
 router.delete("/:id", verifyAdmin, deleteBlog);
 router.post("/deleteMany", deleteMany);
