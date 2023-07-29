@@ -5,7 +5,7 @@ const cookieParser = require("cookie-parser");
 const morgan = require("morgan");
 const { readdirSync } = require("fs");
 const bodyParser = require("body-parser");
-
+require("dotenv").config();
 const csrfProtection = csrf({ cookie: true });
 
 const app = express();
@@ -21,18 +21,17 @@ app.use(
 );
 app.use(express.urlencoded({ extended: false, limit: "5mb" }));
 
-const corsOptions ={
-  origin: "*", 
-  credentials:true,            //access-control-allow-credentials:true
+const corsOptions = {
+  origin: "*",
+  credentials: true, //access-control-allow-credentials:true
   optionSuccessStatus: 200,
-}
+};
 app.use(cors(corsOptions));
 // app.use((req, res, next) => {
 //   res.header('Access-Control-Allow-Origin', '*');
 //   next();
 // });
-app.options('*', cors(corsOptions))
-
+app.options("*", cors(corsOptions));
 
 app.use(cookieParser());
 app.use(morgan("dev"));
@@ -52,7 +51,5 @@ app.get("/api/csrf-token", (req, res) => {
 app.get("/", (req, res) => {
   res.json({ message: "server is running" });
 });
-
-
 
 module.exports = app;
