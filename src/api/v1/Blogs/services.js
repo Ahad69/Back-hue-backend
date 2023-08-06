@@ -306,7 +306,7 @@ exports.singleBlogServices = async ({ q }) => {
           Key: blog.image,
         };
         const command = new GetObjectCommand(getObjectParams);
-        const url = await getSignedUrl(s3, command);
+        const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
         blog.image = url;
       }
     }
@@ -348,11 +348,12 @@ exports.singleBlogByIdServices = async ({ id }) => {
           Key: blog.image,
         };
         const command = new GetObjectCommand(getObjectParams);
-        const url = await getSignedUrl(s3, command);
+        const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
         blog.image = url;
       }
     }
 
+    // console.log(blogs);
     response.data = { blogs };
 
     return response;
