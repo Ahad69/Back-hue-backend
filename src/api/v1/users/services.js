@@ -20,6 +20,31 @@ const generateJwtToken = ({
   );
 };
 
+exports.saveUser = async (req, res) => {
+  const { given_name, family_name, email, picture } = req.body;
+
+  try {
+    const isExist = await User.findOne({ email: email });
+
+    if (isExist) {
+      return res.status(201).json({ message: "success", isExist });
+    }
+    const data = {
+      firstName: given_name,
+      lastName: family_name,
+      email,
+      avater: picture,
+      credit: 0,
+    };
+
+    const createdUser = await User.create(data);
+    return res.status(201).json({ message: "success", isExist: createdUser });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Invalid" });
+  }
+};
+
 exports.addUserService = async (req, res) => {
   const { firstName, lastName, email, address, password, avater, month } =
     req.body;
@@ -387,6 +412,8 @@ exports.getUserService = async ({ id }) => {
     message: "Fetch deatiled User successfully",
     data: {},
   };
+
+  console.log(id);
 
   try {
     response.data.user = await User.findOne({
