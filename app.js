@@ -16,10 +16,10 @@ app.use(
     verify: (req, res, buf) => {
       req.rawBody = buf;
     },
-    limit: "5mb",
+    limit: "10mb",
   })
 );
-app.use(express.urlencoded({ extended: false, limit: "5mb" }));
+app.use(express.urlencoded({ extended: false, limit: "10mb" }));
 
 const corsOptions = {
   origin: "*",

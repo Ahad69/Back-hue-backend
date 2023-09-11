@@ -925,8 +925,6 @@ exports.getProductService = async ({ id }) => {
     data: {},
   };
 
-  console.log(id);
-
   try {
     const products = await Product.aggregate([
       { $match: { $expr: { $eq: ["$_id", { $toObjectId: `${id}` }] } } },
