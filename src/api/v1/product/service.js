@@ -615,6 +615,68 @@ exports.getPostForSitemap = async () => {
   }
 };
 
+exports.getPostForSitemapSecond = async () => {
+  const response = {
+    code: 200,
+    status: "success",
+    message: "Product added successfully",
+    data: {},
+  };
+
+  try {
+    const posts = await Product.find({}, "category").skip(30000).limit(30000);
+    response.data = posts;
+    return response;
+  } catch (error) {
+    console.log(error);
+    response.code = 500;
+    response.status = "failed";
+    response.message = "Error. Try again";
+    return response;
+  }
+};
+
+exports.getPostForSitemapthird = async () => {
+  const response = {
+    code: 200,
+    status: "success",
+    message: "Product added successfully",
+    data: {},
+  };
+
+  try {
+    const posts = await Product.find({}, "category").skip(60000).limit(30000);
+    response.data = posts;
+    return response;
+  } catch (error) {
+    console.log(error);
+    response.code = 500;
+    response.status = "failed";
+    response.message = "Error. Try again";
+    return response;
+  }
+};
+exports.getPostForSitemapFourth = async () => {
+  const response = {
+    code: 200,
+    status: "success",
+    message: "Product added successfully",
+    data: {},
+  };
+
+  try {
+    const posts = await Product.find({}, "category").skip(90000).limit(30000);
+    response.data = posts;
+    return response;
+  } catch (error) {
+    console.log(error);
+    response.code = 500;
+    response.status = "failed";
+    response.message = "Error. Try again";
+    return response;
+  }
+};
+
 exports.getAllPosts = async ({ page, category, state }) => {
   const response = {
     code: 200,

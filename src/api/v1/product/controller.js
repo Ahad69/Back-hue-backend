@@ -14,6 +14,9 @@ const {
   updateApprove,
   getAllPosts,
   getPostForSitemap,
+  getPostForSitemapSecond,
+  getPostForSitemapthird,
+  getPostForSitemapFourth,
 } = require("./service");
 
 // add Products
@@ -96,6 +99,34 @@ exports.getPosts = async (req, res) => {
 
 exports.getPostsSitemap = async (req, res) => {
   const { status, code, message, data } = await getPostForSitemap({
+    ...req.query,
+  });
+  if (data) {
+    return res.status(code).json({ code, status, message, data });
+  }
+  res.status(code).json({ code, status, message });
+};
+
+exports.getPostsSitemapSecond = async (req, res) => {
+  const { status, code, message, data } = await getPostForSitemapSecond({
+    ...req.query,
+  });
+  if (data) {
+    return res.status(code).json({ code, status, message, data });
+  }
+  res.status(code).json({ code, status, message });
+};
+exports.getPostsSitemapThird = async (req, res) => {
+  const { status, code, message, data } = await getPostForSitemapthird({
+    ...req.query,
+  });
+  if (data) {
+    return res.status(code).json({ code, status, message, data });
+  }
+  res.status(code).json({ code, status, message });
+};
+exports.getPostsSitemapFourth = async (req, res) => {
+  const { status, code, message, data } = await getPostForSitemapFourth({
     ...req.query,
   });
   if (data) {

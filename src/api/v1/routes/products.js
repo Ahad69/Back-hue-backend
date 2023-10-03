@@ -18,6 +18,9 @@ const {
   getAllPost,
   getAdminPosterPost,
   getPostsSitemap,
+  getPostsSitemapSecond,
+  getPostsSitemapThird,
+  getPostsSitemapFourth,
 } = require("../product/controller");
 const { updateApproveMany, deleteMany } = require("../product/service");
 
@@ -28,6 +31,9 @@ router.get("/posterid/:id", getPosterPost);
 router.get("/admin", verifyAdmin, getAdminPost);
 
 router.get("/sitemap", getPostsSitemap);
+router.get("/sitemap2", getPostsSitemapSecond);
+router.get("/sitemap3", getPostsSitemapThird);
+router.get("/sitemap4", getPostsSitemapFourth);
 
 router.patch("/approved/:id", verifyAdmin, updateApprove);
 
