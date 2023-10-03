@@ -20,12 +20,36 @@ const generateJwtToken = ({
   );
 };
 
+exports.saveUser = async (req, res) => {
+  const { given_name, family_name, email, picture } = req.body;
+
+  try {
+    const isExist = await User.findOne({ email: email });
+
+    if (isExist) {
+      return res.status(201).json({ message: "success", isExist });
+    }
+    const data = {
+      firstName: given_name,
+      lastName: family_name,
+      email,
+      avater: picture,
+      credit: 0,
+    };
+
+    const createdUser = await User.create(data);
+    return res.status(201).json({ message: "success", isExist: createdUser });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Invalid" });
+  }
+};
+
 exports.addUserService = async (req, res) => {
   const { firstName, lastName, email, address, password, avater, month } =
     req.body;
   try {
-
-    const emails = email.toLowerCase()
+    const emails = email.toLowerCase();
 
     User.findOne({ email: emails }).exec(async (error, user) => {
       if (user)
@@ -38,7 +62,7 @@ exports.addUserService = async (req, res) => {
       const newUser = new User({
         firstName,
         lastName,
-        email : emails,
+        email: emails,
         month,
         avater,
         password: hashedPassword,
@@ -49,21 +73,15 @@ exports.addUserService = async (req, res) => {
       return res.status(201).json({ message: "success", newUser });
     });
   } catch (error) {
-    
     res.status(500).json({ message: "Invalid" });
   }
 };
-
-
 
 exports.signinUsers = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-
-    const emails = email.toLowerCase()
-
-   
+    const emails = email.toLowerCase();
 
     const user = await User.findOne({ email: emails });
 
@@ -74,8 +92,6 @@ exports.signinUsers = async (req, res) => {
         message: "User Not Found",
       });
     }
-
-
 
     const isPasswordMatched = await bcrypt.compare(password, user.password);
 
@@ -114,8 +130,7 @@ exports.signinUsers = async (req, res) => {
 
 // get all Users
 exports.getUsersService = async (req, res) => {
-
-  const { q , page } = req.query;
+  const { q, page } = req.query;
 
   let query = { isDelete: false };
   if (q !== "undefined" || q !== undefined || q) {
@@ -126,29 +141,21 @@ exports.getUsersService = async (req, res) => {
     };
   }
 
-
-
   const totalDocuments = await User.countDocuments({});
   const pageNumber = page ? parseInt(page) : 1;
   const limit = 10;
   const skipCount = (pageNumber - 1) * limit;
- 
 
   const users = await User.find(query)
-  .sort({ _id: -1 })
-  .skip(skipCount)
-  .limit(limit)
+    .sort({ _id: -1 })
+    .skip(skipCount)
+    .limit(limit);
 
   const startIndex = skipCount + 1;
   const endIndex = skipCount + users.length;
 
-
-  res.status(200).json({users, totalDocuments , startIndex})
-  
+  res.status(200).json({ users, totalDocuments, startIndex });
 };
-
-
-
 
 // update Users
 exports.updateUserAddressService = async ({
@@ -227,8 +234,6 @@ exports.updateUserService = async ({
     user.email = email ? email : user.email;
     user.phone = phone ? phone : user.phone;
     user.avater = avater ? avater : user.avater;
-
-
 
     if (credit == 0) {
       user.credit = 0;
@@ -407,6 +412,8 @@ exports.getUserService = async ({ id }) => {
     message: "Fetch deatiled User successfully",
     data: {},
   };
+
+  console.log(id);
 
   try {
     response.data.user = await User.findOne({

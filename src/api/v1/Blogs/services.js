@@ -1,4 +1,22 @@
 const { Blogs } = require("../models");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+const {
+  S3Client,
+  GetObjectCommand,
+  DeleteObjectCommand,
+} = require("@aws-sdk/client-s3");
+
+const bucket_Name = process.env.BUCKET_NAME;
+const bucket_Region = process.env.BUCKET_REGION;
+const access_Key = process.env.ACCESS_KEY;
+const secret_Access = process.env.SECRET_ACCESS;
+const s3 = new S3Client({
+  credentials: {
+    accessKeyId: access_Key,
+    secretAccessKey: secret_Access,
+  },
+  region: bucket_Region,
+});
 
 exports.addBlogServices = async ({ body }) => {
   const response = {
@@ -102,6 +120,18 @@ exports.getBlogsServices = async ({ q, page, cat }) => {
         },
       },
     ]);
+
+    for (const blog of blogs) {
+      if (!blog.image.includes("imagekit")) {
+        const getObjectParams = {
+          Bucket: bucket_Name,
+          Key: blog.image,
+        };
+        const command = new GetObjectCommand(getObjectParams);
+        const url = await getSignedUrl(s3, command);
+        blog.image = url;
+      }
+    }
 
     if (blogs.length === 0) {
       response.code = 404;
@@ -261,15 +291,27 @@ exports.singleBlogServices = async ({ q }) => {
   };
 
   try {
-    const blog = await Blogs.find({ permalink: q });
-    if (!blog) {
+    const blogs = await Blogs.find({ permalink: q });
+    if (!blogs) {
       response.code = 404;
       response.status = "failed";
       response.message = "Error. Try again";
       return response;
     }
 
-    response.data = { blog };
+    for (const blog of blogs) {
+      if (!blog.image.includes("imagekit")) {
+        const getObjectParams = {
+          Bucket: bucket_Name,
+          Key: blog.image,
+        };
+        const command = new GetObjectCommand(getObjectParams);
+        const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+        blog.image = url;
+      }
+    }
+
+    response.data = { blogs };
 
     return response;
   } catch (error) {
@@ -290,15 +332,29 @@ exports.singleBlogByIdServices = async ({ id }) => {
   };
 
   try {
-    const blog = await Blogs.findOne({ _id: id });
-    if (!blog) {
+    const blogs = await Blogs.find({ _id: id });
+
+    if (!blogs) {
       response.code = 404;
       response.status = "failed";
       response.message = "Error. Try again";
       return response;
     }
 
-    response.data = { blog };
+    for (const blog of blogs) {
+      if (!blog.image.includes("imagekit")) {
+        const getObjectParams = {
+          Bucket: bucket_Name,
+          Key: blog.image,
+        };
+        const command = new GetObjectCommand(getObjectParams);
+        const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+        blog.image = url;
+      }
+    }
+
+    // console.log(blogs);
+    response.data = { blogs };
 
     return response;
   } catch (error) {

@@ -1,5 +1,23 @@
 const { default: mongoose } = require("mongoose");
 const { Product, User } = require("../models");
+const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+const {
+  S3Client,
+  GetObjectCommand,
+  DeleteObjectCommand,
+} = require("@aws-sdk/client-s3");
+
+const bucket_Name = process.env.BUCKET_NAME;
+const bucket_Region = process.env.BUCKET_REGION;
+const access_Key = process.env.ACCESS_KEY;
+const secret_Access = process.env.SECRET_ACCESS;
+const s3 = new S3Client({
+  credentials: {
+    accessKeyId: access_Key,
+    secretAccessKey: secret_Access,
+  },
+  region: bucket_Region,
+});
 
 const moment = require("moment/moment");
 
@@ -113,6 +131,8 @@ exports.getApprovedService = async ({
 
     const userData = await User.findOne({ email: searchText });
     const user = userData?._id?.toString();
+
+    console.log(user);
 
     let forPage = {};
 
@@ -279,7 +299,18 @@ exports.getApprovedService = async ({
           subCategory: 1,
           createdAt: 1,
           isPremium: 1,
-          cityCount: { $size: "$cities" },
+          cityCount: {
+            $cond: {
+              if: {
+                $and: [
+                  { $isArray: "$cities" },
+                  { $ne: [{ $size: "$cities" }, 0] },
+                ],
+              },
+              then: { $size: "$cities" },
+              else: 0,
+            },
+          },
         },
       },
     ]);
@@ -685,29 +716,136 @@ exports.searchProductService = async ({ q }) => {
 };
 
 // get one Products by id
-exports.getOnlyUserPosts = async ({ id, page }) => {
+exports.getOnlyUserPosts = async ({
+  id,
+  page,
+  status,
+  category,
+  searchText,
+}) => {
   const response = {
     code: 200,
     status: "success",
     message: "Fetch deatiled Product successfully",
     data: {},
     pages: 0,
+    startIndex: 0,
   };
 
   try {
     const pageNumber = page ? parseInt(page) : 1;
     const limit = 10;
+    const skipCount = (pageNumber - 1) * limit;
+    const regex = new RegExp(searchText, "i");
 
-    const allPosts = await Product.find({
-      posterId: id,
-      isDelete: false,
-    }).countDocuments({});
+    let forPage = {};
+    if (searchText && category && status) {
+      forPage = {
+        $expr: { $eq: ["$posterId", { $toObjectId: `${id}` }] },
+        isPremium: status == "true" ? true : false,
+        category: category,
+        name: regex,
+      };
+    } else if (category && status) {
+      forPage = {
+        $expr: { $eq: ["$posterId", { $toObjectId: `${id}` }] },
+        isPremium: status == "true" ? true : false,
+        category: category,
+      };
+    } else if (searchText && status) {
+      forPage = {
+        $expr: { $eq: ["$posterId", { $toObjectId: `${id}` }] },
+        isPremium: status == "true" ? true : false,
+        name: regex,
+      };
+    } else if (category && searchText) {
+      forPage = {
+        $expr: { $eq: ["$posterId", { $toObjectId: `${id}` }] },
+        category: category,
+        name: regex,
+      };
+    } else if (category) {
+      forPage = {
+        $expr: { $eq: ["$posterId", { $toObjectId: `${id}` }] },
+        category: category,
+      };
+    } else if (status) {
+      forPage = {
+        $expr: { $eq: ["$posterId", { $toObjectId: `${id}` }] },
+        isPremium: status == "true" ? true : false,
+      };
+    } else if (searchText) {
+      forPage = {
+        $expr: { $eq: ["$posterId", { $toObjectId: `${id}` }] },
+        name: regex,
+      };
+    } else {
+      forPage = {
+        $expr: { $eq: ["$posterId", { $toObjectId: `${id}` }] },
+      };
+    }
+
+    const matchStage = {};
+    if (searchText && category && status) {
+      matchStage.$match = {
+        $expr: { $eq: ["$posterId", { $toObjectId: `${id}` }] },
+        isPremium: status == "true" ? true : false,
+        category: category,
+        name: regex,
+      };
+    } else if (category && status) {
+      matchStage.$match = {
+        $expr: { $eq: ["$posterId", { $toObjectId: `${id}` }] },
+        isPremium: status == "true" ? true : false,
+        category: category,
+      };
+    } else if (searchText && status) {
+      matchStage.$match = {
+        $expr: { $eq: ["$posterId", { $toObjectId: `${id}` }] },
+        isPremium: status == "true" ? true : false,
+        name: regex,
+      };
+    } else if (category && searchText) {
+      matchStage.$match = {
+        $expr: { $eq: ["$posterId", { $toObjectId: `${id}` }] },
+        category: category,
+        name: regex,
+      };
+    } else if (category) {
+      matchStage.$match = {
+        $expr: { $eq: ["$posterId", { $toObjectId: `${id}` }] },
+        category: category,
+      };
+    } else if (status) {
+      matchStage.$match = {
+        $expr: { $eq: ["$posterId", { $toObjectId: `${id}` }] },
+        isPremium: status == "true" ? true : false,
+      };
+    } else if (searchText) {
+      matchStage.$match = {
+        $expr: { $eq: ["$posterId", { $toObjectId: `${id}` }] },
+        name: regex,
+      };
+    } else {
+      matchStage.$match = {
+        $expr: { $eq: ["$posterId", { $toObjectId: `${id}` }] },
+      };
+    }
 
     const posts = await Product.aggregate([
-      { $match: { $expr: { $eq: ["$posterId", { $toObjectId: `${id}` }] } } },
-      { $sort: { isPremium: -1, _id: -1 } },
-      { $skip: (pageNumber - 1) * limit },
+      matchStage,
+      { $sort: { _id: -1 } },
+      { $skip: skipCount },
       { $limit: limit },
+      {
+        $project: {
+          name: 1,
+          isPremium: 1,
+          category: 1,
+          subCategory: 1,
+          createdAt: 1,
+        },
+      },
     ]);
 
     if (posts.length == 0) {
@@ -717,10 +855,11 @@ exports.getOnlyUserPosts = async ({ id, page }) => {
       return response;
     }
 
+    response.startIndex = skipCount + 1;
     response.data = {
       posts,
     };
-    response.pages = allPosts;
+    response.pages = await Product.find(forPage).countDocuments({});
 
     return response;
   } catch (error) {
@@ -787,7 +926,7 @@ exports.getProductService = async ({ id }) => {
   };
 
   try {
-    response.data.product = await Product.aggregate([
+    const products = await Product.aggregate([
       { $match: { $expr: { $eq: ["$_id", { $toObjectId: `${id}` }] } } },
       {
         $lookup: {
@@ -799,12 +938,31 @@ exports.getProductService = async ({ id }) => {
       },
     ]);
 
-    if (!response.data.product) {
+    if (!products?.[0].imgOne) {
+      response.data.product = products;
+      return response;
+    }
+
+    for (const blog of products) {
+      if (!blog.imgOne.includes("imagekit")) {
+        const getObjectParams = {
+          Bucket: bucket_Name,
+          Key: blog.imgOne,
+        };
+        const command = new GetObjectCommand(getObjectParams);
+        const url = await getSignedUrl(s3, command);
+        blog.imgOne = url;
+      }
+    }
+
+    if (!products) {
       response.code = 404;
       response.status = "failed";
       response.message = "No Product found";
       return response;
     }
+
+    response.data.product = products;
 
     return response;
   } catch (error) {

@@ -21,10 +21,10 @@ const {
 } = require("../product/controller");
 const { updateApproveMany, deleteMany } = require("../product/service");
 
-router.post("/", verifyToken, addProduct);
+router.post("/", addProduct);
 
 router.patch("/:id", updateProduct);
-
+router.get("/posterid/:id", getPosterPost);
 router.get("/admin", verifyAdmin, getAdminPost);
 
 router.get("/sitemap", getPostsSitemap);
@@ -44,8 +44,6 @@ router.delete("/:id", deleteProduct);
 router.get("/search", searchProduct);
 
 router.get("/:id", getProduct);
-
-router.get("/posterid/:id", verifyToken, getPosterPost);
 router.get("/admin-user/:id", getAdminPosterPost);
 
 module.exports = router;
