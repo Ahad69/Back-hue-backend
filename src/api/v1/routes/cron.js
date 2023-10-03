@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
     });
 
     const minus = validate.map(async (a) => {
-      a.premiumDay = a.premiumDay - 12;
+      a.premiumDay = a.premiumDay - 24;
       if (a.premiumDay == 0) {
         a.isPremium = true;
       }
