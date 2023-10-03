@@ -604,7 +604,6 @@ exports.getPostForSitemap = async () => {
 
   try {
     const posts = await Product.find({}, "category").limit(30000);
-
     response.data = posts;
     return response;
   } catch (error) {
