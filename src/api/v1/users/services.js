@@ -130,7 +130,7 @@ exports.signinUsers = async (req, res) => {
 
 // get all Users
 exports.getUsersService = async (req, res) => {
-  const { q, page } = req.query;
+  const { q, page, size } = req.query;
 
   let query = { isDelete: false };
   if (q !== "undefined" || q !== undefined || q) {
@@ -143,7 +143,7 @@ exports.getUsersService = async (req, res) => {
 
   const totalDocuments = await User.countDocuments({});
   const pageNumber = page ? parseInt(page) : 1;
-  const limit = 10;
+  const limit = size ? parseInt(size) : 10;
   const skipCount = (pageNumber - 1) * limit;
 
   const users = await User.find(query)
