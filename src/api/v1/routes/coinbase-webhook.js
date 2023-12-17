@@ -14,9 +14,14 @@ router.post("/", async (req, res) => {
 
         if (event.type === 'charge:confirmed') {
           const user_id = event.data.metadata.user_id;
+
           const amount = event.data.pricing.local.amount;
 
-          console.log(event.data);
+            if (amount === 100) {
+              amount = 120;
+            }
+
+            console.log(amount);
           //            const date = new Date().toDateString();
           //            const isCompleted = "Done"
           //            const invoice =
