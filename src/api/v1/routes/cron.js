@@ -20,6 +20,8 @@ router.get("/", async (req, res) => {
       }
       await a.save();
     });
+
+    res.send("success");
   };
   await updateDataStatus();
 });
