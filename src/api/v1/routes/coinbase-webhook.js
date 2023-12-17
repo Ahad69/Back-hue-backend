@@ -13,30 +13,30 @@ router.post("/", async (req, res) => {
         const event = Webhook.verifyEventBody(rawBody, signature, webhookSecret);
 
         if (event.type === 'charge:confirmed') {
-       
-            const user_id = event.data.metadata.user_id;
-            const amount = event.data.pricing.local.amount;
+          const user_id = event.data.metadata.user_id;
+          const amount = event.data.pricing.local.amount;
 
-            const date = new Date().toDateString();
-            const isCompleted = "Done"
-            const invoice =
-            Math.floor(Math.random() * 500) * 10 +
-            user_id +
-            Math.floor(Math.random() * 500) * 10;
-
-            const transaction = {
-                amount,
-                date,
-                invoice,
-                isCompleted,
-                userId : user_id,
-                isDelete: false,
-                
-              };
-
-            const newTransaction =  new Transactions(transaction);
-            await newTransaction.save();
-            await increaseUserCredit(user_id, parseFloat(amount));
+          console.log(event.data);
+          //            const date = new Date().toDateString();
+          //            const isCompleted = "Done"
+          //            const invoice =
+          //            Math.floor(Math.random() * 500) * 10 +
+          //            user_id +
+          //            Math.floor(Math.random() * 500) * 10;
+          //
+          //            const transaction = {
+          //                amount,
+          //                date,
+          //                invoice,
+          //                isCompleted,
+          //                userId : user_id,
+          //                isDelete: false,
+          //
+          //              };
+          //
+          //            const newTransaction =  new Transactions(transaction);
+          //            await newTransaction.save();
+          //            await increaseUserCredit(user_id, parseFloat(amount));
         }
 
         res.send(`success ${event.id}`);
