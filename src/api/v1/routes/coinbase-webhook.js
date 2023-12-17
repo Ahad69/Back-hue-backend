@@ -20,11 +20,11 @@ router.post("/", async (req, res) => {
           if (event.data.pricing.local.amount == 100) {
             amount = 120;
           } else if (event.data.pricing.local.amount == 200) {
-            amount = 120;
+            amount = 250;
           } else if (event.data.pricing.local.amount == 500) {
-            amount = 120;
+            amount = 650;
           } else if (event.data.pricing.local.amount == 1000) {
-            amount = 120;
+            amount = 1500;
           } else {
             amount = event.data.pricing.local.amount;
           }
