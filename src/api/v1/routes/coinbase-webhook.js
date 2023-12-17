@@ -29,33 +29,32 @@ router.post("/", async (req, res) => {
             amount = event.data.pricing.local.amount;
           }
 
-      
+          console.log(amount);
 
-          
-                                const date = new Date().toDateString();
-                                const isCompleted = "Done";
-                                const invoice =
-                                  Math.floor(Math.random() * 500) * 10 +
-                                  user_id +
-                                  Math.floor(Math.random() * 500) * 10;
-
-                                const transaction = {
-                                  amount,
-                                  date,
-                                  invoice,
-                                  isCompleted,
-                                  userId: user_id,
-                                  isDelete: false,
-                                };
-
-                                const newTransaction = new Transactions(
-                                  transaction
-                                );
-                                await newTransaction.save();
-                                await increaseUserCredit(
-                                  user_id,
-                                  parseFloat(amount)
-                                );
+          //                                const date = new Date().toDateString();
+          //                                const isCompleted = "Done";
+          //                                const invoice =
+          //                                  Math.floor(Math.random() * 500) * 10 +
+          //                                  user_id +
+          //                                  Math.floor(Math.random() * 500) * 10;
+          //
+          //                                const transaction = {
+          //                                  amount,
+          //                                  date,
+          //                                  invoice,
+          //                                  isCompleted,
+          //                                  userId: user_id,
+          //                                  isDelete: false,
+          //                                };
+          //
+          //                                const newTransaction = new Transactions(
+          //                                  transaction
+          //                                );
+          //                                await newTransaction.save();
+          //                                await increaseUserCredit(
+          //                                  user_id,
+          //                                  parseFloat(amount)
+          //                                );
         }
 
         res.send(`success ${event.id}`);
