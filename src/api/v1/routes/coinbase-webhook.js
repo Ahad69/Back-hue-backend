@@ -19,31 +19,38 @@ router.post("/", async (req, res) => {
 
           if (event.data.pricing.local.amount == 100) {
             amount = 120;
+          } else if (event.data.pricing.local.amount == 200) {
+            amount = 120;
+          } else if (event.data.pricing.local.amount == 500) {
+            amount = 120;
+          } else if (event.data.pricing.local.amount == 1000) {
+            amount = 120;
+          } else {
+            amount = event.data.pricing.local.amount;
           }
 
-          console.log("amount = ", amount);
-          console.log("price = ", event.data.pricing.local.amount);
+          console.log(event.data);
 
-          //            const date = new Date().toDateString();
-          //            const isCompleted = "Done"
-          //            const invoice =
-          //            Math.floor(Math.random() * 500) * 10 +
-          //            user_id +
-          //            Math.floor(Math.random() * 500) * 10;
           //
-          //            const transaction = {
-          //                amount,
-          //                date,
-          //                invoice,
-          //                isCompleted,
-          //                userId : user_id,
-          //                isDelete: false,
+          //                      const date = new Date().toDateString();
+          //                      const isCompleted = "Done";
+          //                      const invoice =
+          //                        Math.floor(Math.random() * 500) * 10 +
+          //                        user_id +
+          //                        Math.floor(Math.random() * 500) * 10;
           //
-          //              };
+          //                      const transaction = {
+          //                        amount,
+          //                        date,
+          //                        invoice,
+          //                        isCompleted,
+          //                        userId: user_id,
+          //                        isDelete: false,
+          //                      };
           //
-          //            const newTransaction =  new Transactions(transaction);
-          //            await newTransaction.save();
-          //            await increaseUserCredit(user_id, parseFloat(amount));
+          //                      const newTransaction = new Transactions(transaction);
+          //                      await newTransaction.save();
+          //                      await increaseUserCredit(user_id, parseFloat(amount));
         }
 
         res.send(`success ${event.id}`);
