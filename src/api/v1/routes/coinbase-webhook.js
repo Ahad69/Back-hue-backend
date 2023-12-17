@@ -21,7 +21,8 @@ router.post("/", async (req, res) => {
             amount = 120;
           }
 
-          console.log(amount, event.data.pricing.local.amount);
+          console.log("amount = ", amount);
+          console.log("price = ", event.data.pricing.local.amount);
 
           //            const date = new Date().toDateString();
           //            const isCompleted = "Done"
