@@ -74,11 +74,13 @@ exports.deleteProduct = async (req, res) => {
 
 // get all Products
 exports.getAdminPost = async (req, res) => {
-  const { status, code, message, data } = await getUnApprovedService({
-    ...req.query,
-  });
+  const { status, code, message, data, totalPost } = await getUnApprovedService(
+    {
+      ...req.query,
+    }
+  );
   if (data.products) {
-    return res.status(code).json({ code, status, message, data });
+    return res.status(code).json({ code, status, message, data, totalPost });
   }
   res.status(code).json({ code, status, message });
 };

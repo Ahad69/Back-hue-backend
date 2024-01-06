@@ -462,23 +462,29 @@ exports.updateApproveMany = async (req, res) => {
     data: {},
   };
 
-  const { data } = req.body;
+  const data = req.body;
 
-  console.log(data);
+  const session = await mongoose.startSession();
 
   try {
-    data.map((a) => {
-      const f = Product.findByIdAndUpdate(
-        a,
+    await session.startTransaction();
+    const addCustomerToTheStores = data.map(async (id, index) => {
+      await new Promise((resolve) => setTimeout(resolve, index * 1000));
+
+      const updatedStore = await Product.findByIdAndUpdate(
+        id,
         { $set: { isApproved: true } },
-        function (err, docs) {
-          console.log(err);
-        }
+        { new: true }
       );
     });
-    res
-      .status(200)
-      .json({ status: "success", message: "Post updated successfully" });
+    await session.commitTransaction();
+    await session.endSession();
+
+    setTimeout(() => {
+      res
+        .status(200)
+        .json({ status: "success", message: "Post updated successfully" });
+    }, data.length * 1000);
   } catch (e) {
     console.log(e);
     res.status(500).json({ message: "Something went wrong in /edit-order" });
@@ -487,8 +493,6 @@ exports.updateApproveMany = async (req, res) => {
 
 exports.deleteMany = async (req, res) => {
   const ids = req.body;
-
-  console.log(ids);
 
   try {
     await Product.deleteMany(
@@ -553,6 +557,7 @@ exports.getUnApprovedService = async ({ page, size }) => {
     status: "success",
     message: "Fetch Product list successfully",
     data: {},
+    totalPost: 0,
   };
 
   try {
@@ -579,6 +584,10 @@ exports.getUnApprovedService = async ({ page, size }) => {
       response.message = "No Product data found";
       return response;
     }
+
+    response.totalPost = await Product.find({
+      isApproved: false,
+    }).countDocuments({});
 
     response.data = {
       products,
