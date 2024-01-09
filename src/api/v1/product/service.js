@@ -1008,6 +1008,16 @@ exports.getProductService = async ({ id }) => {
       },
     ]);
 
+    products[0].existedImage1 = products?.[0].imgOne;
+    products[0].existedImage2 = products?.[0].imgTwo;
+    products[0].existedImage3 = products?.[0].imgThree;
+    products[0].existedImage4 = products?.[0].imgFour;
+
+    if (products?.[0].imgOne.includes("dk3vy6fruyw6l")) {
+      response.data.product = products;
+      return response;
+    }
+
     if (!products?.[0].imgOne) {
       response.data.product = products;
       return response;

@@ -1,12 +1,7 @@
 const router = require("express").Router();
 const multer = require("multer");
 const path = require("path");
-const {
-  S3Client,
-  PutObjectCommand,
-  GetObjectCommand,
-} = require("@aws-sdk/client-s3");
-const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 
 const bucket_Name = process.env.BUCKET_NAME;
 const bucket_Region = process.env.BUCKET_REGION;
@@ -24,34 +19,39 @@ const s3 = new S3Client({
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-router.post("/files", upload.single("images"), async (req, res) => {
-  const fileExtention = path.extname(req.file.originalname);
-  const fileName =
-    req.file.originalname
-      .replace(fileExtention, "")
-      .toLowerCase()
-      .split(" ")
-      .join("-") +
-    "-" +
-    Date.now();
+router.post("/files", upload.array("images", 5), async (req, res) => {
+  try {
+    const files = req.files;
+    const uploadedFiles = [];
 
-  const params = {
-    Bucket: bucket_Name,
-    Key: fileName,
-    Body: req.file.buffer,
-    ContentType: req.file.mimetype,
-  };
-  const command = new PutObjectCommand(params);
+    for (const file of files) {
+      const fileExtention = path.extname(file.originalname);
+      const fileName =
+        file.originalname
+          .replace(fileExtention, "")
+          .toLowerCase()
+          .split(" ")
+          .join("-") +
+        "-" +
+        Date.now();
 
-  await s3.send(command);
+      const params = {
+        Bucket: bucket_Name,
+        Key: fileName,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+      };
 
-  const getObjectParams = {
-    Bucket: bucket_Name,
-    Key: fileName,
-  };
-  const command2 = new GetObjectCommand(getObjectParams);
-  const url = await getSignedUrl(s3, command2, { expiresIn: 600 });
+      const command = new PutObjectCommand(params);
+      await s3.send(command);
 
-  res.send({ url: url });
+      uploadedFiles.push(`https://dk3vy6fruyw6l.cloudfront.net/${fileName}`);
+    }
+
+    res.json(uploadedFiles);
+  } catch (error) {
+    console.error("Error uploading files to S3:", error);
+    res.status(500).json({ error: "An error occurred while uploading files." });
+  }
 });
 module.exports = router;
