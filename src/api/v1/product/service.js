@@ -132,8 +132,6 @@ exports.getApprovedService = async ({
     const userData = await User.findOne({ email: searchText });
     const user = userData?._id?.toString();
 
-    console.log(user);
-
     let forPage = {};
 
     if (cat && subCat && newDate && searchText) {
@@ -285,6 +283,11 @@ exports.getApprovedService = async ({
 
     const posts = await Product.aggregate([
       matchStage,
+      {
+        $match: {
+          isApproved: true,
+        },
+      },
       {
         $sort: { createdAt: -1 },
       },
@@ -469,7 +472,7 @@ exports.updateApproveMany = async (req, res) => {
   try {
     await session.startTransaction();
     const addCustomerToTheStores = data.map(async (id, index) => {
-      await new Promise((resolve) => setTimeout(resolve, index * 1000));
+      await new Promise((resolve) => setTimeout(resolve, index * 500));
 
       const updatedStore = await Product.findByIdAndUpdate(
         id,
@@ -484,7 +487,7 @@ exports.updateApproveMany = async (req, res) => {
       res
         .status(200)
         .json({ status: "success", message: "Post updated successfully" });
-    }, data.length * 1000);
+    }, data.length * 500);
   } catch (e) {
     console.log(e);
     res.status(500).json({ message: "Something went wrong in /edit-order" });
