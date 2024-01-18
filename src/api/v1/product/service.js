@@ -689,7 +689,7 @@ exports.getPostForSitemapFourth = async () => {
   }
 };
 
-exports.getAllPosts = async ({ page, category, state }) => {
+exports.getAllPosts = async ({ page, category, state, cat }) => {
   const response = {
     code: 200,
     status: "success",
@@ -700,7 +700,7 @@ exports.getAllPosts = async ({ page, category, state }) => {
 
   try {
     const pageNumber = page ? parseInt(page) : 1;
-    const limit = 50;
+    const limit = 35;
     const totalDocs = await Product.find({
       subCategory: category,
       cities: { $elemMatch: { $eq: state } },
@@ -725,7 +725,16 @@ exports.getAllPosts = async ({ page, category, state }) => {
       },
       { $skip: (pageNumber - 1) * limit },
       { $limit: limit },
-      { $project: { name: 1, _id: 1, updatedAt: 1, isPremium: 1, age: 1 } },
+      {
+        $project: {
+          name: 1,
+          _id: 1,
+          createdAt: 1,
+          isPremium: 1,
+          age: 1,
+          imgOne: 1,
+        },
+      },
     ]);
 
     if (products.length === 0) {
@@ -734,8 +743,26 @@ exports.getAllPosts = async ({ page, category, state }) => {
       response.message = "No Product data found";
       return response;
     }
-
     response.pages = totalDocs;
+
+    for (const blog of products) {
+      if (!blog.imgOne.includes("dk3vy6fruyw6l")) {
+        if (blog.imgOne.trim() === "" || blog.imgOne.includes("imagekit")) {
+          blog.imgOne =
+            cat === "Adult" || cat === "Dating"
+              ? "image-not-found.jpeg"
+              : "image-is-not-found.png";
+        }
+        const getObjectParams = {
+          Bucket: bucket_Name,
+          Key: blog.imgOne,
+        };
+        const command = new GetObjectCommand(getObjectParams);
+        const url = await getSignedUrl(s3, command);
+        blog.imgOne = url;
+      }
+    }
+
     response.data = {
       products,
     };
