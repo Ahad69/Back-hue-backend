@@ -37,20 +37,13 @@ exports.addLinks = async ({ body }) => {
   };
 
 
-  exports.updateLinks = async ({
-    id,
-    shemale,
-    meet,
-    live
-  }) => {
+  exports.updateLinks = async ({ id, shemale, meet, live, header }) => {
     const response = {
       code: 200,
       status: "success",
       message: "Links updated successfully",
       data: {},
     };
-  
-    
 
     try {
       const link = await Links.findOne({
@@ -62,22 +55,28 @@ exports.addLinks = async ({ body }) => {
         response.message = "No User data found";
         return response;
       }
-  
+
       link.shemale = shemale ? shemale : link.shemale;
       link.meet = meet ? meet : link.meet;
       link.live = live ? live : link.live;
-  
-  
+      link.header = header ? header : link.header;
+
       await link.save();
-  
+
       response.data.link = link;
-  
+
       return response;
     } catch (error) {
-        console.log(error)
+      console.log(error);
       response.code = 500;
       response.status = "failed";
       response.message = "Error. Try again";
       return response;
     }
+  };
+
+  exports.getLinkService = async (req, res) => {
+    const link = await Links.findOne({});
+    const linkSingle = link.header;
+    return linkSingle;
   };
