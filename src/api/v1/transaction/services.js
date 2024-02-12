@@ -30,7 +30,11 @@ exports.getTransactionsServices = async ({ q }) => {
   };
 
   try {
-    const transactions = await Transactions.find({ email: q });
+    const transactions = await Transactions.find({ email: q })
+      .populate("userId")
+      .select("-__v -isDelete")
+      .sort({ _id: -1 });
+
     if (transactions == 0) {
       response.code = 404;
       response.status = "failed";
