@@ -29,14 +29,36 @@ exports.getTransactionsServices = async ({ q }) => {
     data: [],
   };
 
-  console.log(q);
+  try {
+    const transactions = await Transactions.find({ email: q });
+    if (transactions == 0) {
+      response.code = 404;
+      response.status = "failed";
+      response.message = "No User data found";
+      return response;
+    }
+    response.data = transactions;
+    return response;
+  } catch (error) {
+    console.log(error);
+    response.code = 500;
+    response.status = "failed";
+    response.message = "Error. Try again a";
+    return response;
+  }
+};
+exports.getTransactionsUserServices = async ({ q }) => {
+  const response = {
+    code: 200,
+    status: "success",
+    message: "User data found successfully",
+    data: [],
+  };
 
   try {
     const transactions = await Transactions.find({
       userId: mongoose.Types.ObjectId(q),
     });
-
-    console.log(transactions);
 
     if (transactions == 0) {
       response.code = 404;
