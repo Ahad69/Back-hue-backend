@@ -564,6 +564,10 @@ exports.getUnApprovedService = async ({ page, size }) => {
   };
 
   try {
+    const pageNumber = page ? parseInt(page) : 1;
+    const limit = size ? parseInt(size) : 10;
+    const skipCount = (pageNumber - 1) * limit;
+
     const products = await Product.aggregate([
       { $sort: { isPremium: -1, _id: -1 } },
       {
@@ -571,6 +575,11 @@ exports.getUnApprovedService = async ({ page, size }) => {
           isApproved: false,
         },
       },
+      { $skip: skipCount },
+      {
+        $limit: limit,
+      },
+
       {
         $lookup: {
           from: "users",

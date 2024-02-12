@@ -4,9 +4,10 @@ const { Product, Blogs, User, Transactions } = require("../models");
 const router = express.Router();
 
 router.get("/", verifyAdmin, async (req, res) => {
-
   const allProducts = await Product.countDocuments({});
-  const allPremiumProducts = await Product.find({isPremium : false}).countDocuments({});
+  const allPremiumProducts = await Product.find({
+    isPremium: false,
+  }).countDocuments({});
 
   let today = new Date().toDateString();
 
@@ -36,24 +37,26 @@ router.get("/", verifyAdmin, async (req, res) => {
     { $group: { _id: null, totalCredits: { $sum: "$amount" } } },
   ]);
 
-  console.log(totalTransctionCredits)
-
   const data = {
     allPost: allProducts,
-    premiumPost : allPremiumProducts,
+    premiumPost: allPremiumProducts,
     today: todayPost,
     allBlogs: allBlogs,
     allCredits: allCredits[0].totalCredits,
     allUsers: allUsers,
     allTodayTrans: allTodayTrans,
-    todayTransAmount: todayTransAmount[0]?.totalCredits ? todayTransAmount[0]?.totalCredits  : 0,
-    todayTransAmount: todayTransAmount[0]?.totalCredits ? todayTransAmount[0]?.totalCredits  : 0,
-    totalTransctions : totalTransctionCredits[0]?.totalCredits ? totalTransctionCredits[0]?.totalCredits : 0
+    todayTransAmount: todayTransAmount[0]?.totalCredits
+      ? todayTransAmount[0]?.totalCredits
+      : 0,
+    todayTransAmount: todayTransAmount[0]?.totalCredits
+      ? todayTransAmount[0]?.totalCredits
+      : 0,
+    totalTransctions: totalTransctionCredits[0]?.totalCredits
+      ? totalTransctionCredits[0]?.totalCredits
+      : 0,
   };
 
-
-
-  res.send(data)
+  res.send(data);
 });
 
 module.exports = router;

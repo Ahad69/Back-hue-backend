@@ -16,7 +16,7 @@ exports.getTransaction = async(req , res)=>{
   const {status , code , message, data} = await getTransactionsServices({
     ...req.query,
   });
-  if (data.transactions) {
+  if (data) {
     return res.status(code).json({ code, status, message, data });
   }
   res.status(code).json({ code, status, message });

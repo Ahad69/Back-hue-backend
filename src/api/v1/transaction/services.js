@@ -1,3 +1,4 @@
+const { default: mongoose } = require("mongoose");
 const { Transactions } = require("../models");
 
 exports.addTransactionServices = async ({ body }) => {
@@ -25,33 +26,25 @@ exports.getTransactionsServices = async ({ q }) => {
     code: 200,
     status: "success",
     message: "User data found successfully",
-    data: {},
+    data: [],
   };
 
-  console.log( q )
+  console.log(q);
 
   try {
-    let query = { isDelete: false };
-    if (q !== "undefined" || q !== undefined || q) {
-      let regex = new RegExp(q, "i");
-      query = {
-        ...query,
-        $or: [{ date: regex } ,  { invoice: regex  }],
-      };
-    }
+    const transactions = await Transactions.find({
+      userId: mongoose.Types.ObjectId(q),
+    });
 
-    response.data.transactions = await Transactions.find(query)
-      .populate("userId")
-      .select("-__v -isDelete")
-      .sort({ _id: -1 });
+    console.log(transactions);
 
-    if (response.data.transactions.length == 0) {
+    if (transactions == 0) {
       response.code = 404;
       response.status = "failed";
       response.message = "No User data found";
-	return response
+      return response;
     }
-	
+    response.data = transactions;
     return response;
   } catch (error) {
     console.log(error);
@@ -127,8 +120,7 @@ exports.deleteTransactionServices = async ({ id }) => {
   }
 };
 
-
-exports.getTransactionsService = async (req , res) => {
+exports.getTransactionsService = async (req, res) => {
   const response = {
     code: 200,
     status: "success",
@@ -136,32 +128,29 @@ exports.getTransactionsService = async (req , res) => {
     data: {},
   };
 
-  const id = req.params.id
+  const id = req.params.id;
 
   try {
     if (!id) {
       response.code = 404;
       response.status = "failed";
       response.message = "No User data found";
-      res.send(response)
+      res.send(response);
     }
 
-    response.data.transactions = await Transactions.find({userId : id})
+    response.data.transactions = await Transactions.find({ userId: id })
       .populate("userId")
       .select("-__v -isDelete")
       .sort({ _id: -1 });
-
-
 
     if (response.data.transactions.length == 0) {
       response.code = 404;
       response.status = "failed";
       response.message = "No User data found";
-      res.send(response)
+      res.send(response);
     }
-	
-    res.send(response)
 
+    res.send(response);
   } catch (error) {
     console.log(error);
     response.code = 500;
@@ -170,4 +159,3 @@ exports.getTransactionsService = async (req , res) => {
     return response;
   }
 };
-
