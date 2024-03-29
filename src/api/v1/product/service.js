@@ -1,5 +1,5 @@
 const { default: mongoose } = require("mongoose");
-const { Product, User } = require("../models");
+const { Product, User, Links } = require("../models");
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const {
   S3Client,
@@ -704,6 +704,7 @@ exports.getAllPosts = async ({ page, category, state, cat }) => {
     status: "success",
     message: "Fetch Product list successfully",
     data: {},
+    links: {},
     pages: 0,
   };
 
@@ -775,7 +776,7 @@ exports.getAllPosts = async ({ page, category, state, cat }) => {
     response.data = {
       products,
     };
-
+    response.links = await Links.find({}).select("-v");
     return response;
   } catch (error) {
     console.log(error);
