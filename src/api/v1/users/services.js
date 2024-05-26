@@ -1,4 +1,4 @@
-const { User, Product } = require("../models");
+const { User, Product, Deposit } = require("../models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { updatedTransactionStatus } = require("../transaction/services");
@@ -256,13 +256,15 @@ exports.updateUserService = async ({
   }
 };
 
-exports.updateCreditService = async ({ id, credit }) => {
+exports.updateCreditService = async ({ id, credit, isUpdate }) => {
   const response = {
     code: 200,
     status: "success",
     message: "User updated successfully",
     data: {},
   };
+
+  console.log(isUpdate);
 
   try {
     const user = await User.findOne({
@@ -274,12 +276,17 @@ exports.updateCreditService = async ({ id, credit }) => {
       response.message = "No User data found";
       return response;
     }
-
     user.credit = parseFloat(user.credit) + parseFloat(credit);
-
     await user.save();
-
     response.data.user = user;
+
+    if (isUpdate) {
+      const filter = { _id: isUpdate };
+      const update = { status: "completed" };
+      const depo = await Deposit.findOneAndUpdate(filter, update, {
+        new: true,
+      });
+    }
 
     return response;
   } catch (error) {

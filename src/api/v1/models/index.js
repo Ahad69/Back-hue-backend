@@ -8,6 +8,7 @@ const Blogs = require("../Blogs/Model")
 const Reports = require("../reports/Model")
 const Ads = require("../ads/Model")
 const Transactions = require("../transaction/Model")
+const Deposit = require("../deposit/Model");
 
 module.exports = {
   Product,
@@ -19,4 +20,5 @@ module.exports = {
   Reports,
   Ads,
   Transactions,
+  Deposit,
 };

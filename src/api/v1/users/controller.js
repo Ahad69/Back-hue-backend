@@ -47,6 +47,7 @@ exports.updateCredit = async (req, res) => {
   const { status, code, message, data } = await updateCreditService({
     ...req.params,
     ...req.body,
+    ...req.query,
   });
   if (data.user) {
     return res.status(code).json({ code, status, message, data });
