@@ -9,7 +9,7 @@ const depositSchema = Schema(
     email: { type: String },
     amount: { type: String },
     trxid: { type: String },
-    status: { type: String },
+    status: { type: String, default: "pending" },
     isDelete: { type: Boolean, default: false },
   },
   { timestamps: true }
