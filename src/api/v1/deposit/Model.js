@@ -4,6 +4,7 @@ const { Schema, model } = require("mongoose");
 const depositSchema = Schema(
   {
     userName: { type: String },
+    provider: { type: String },
     userId: { type: String },
     email: { type: String },
     amount: { type: String },
