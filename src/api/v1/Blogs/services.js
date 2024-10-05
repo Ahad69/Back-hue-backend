@@ -121,16 +121,11 @@ exports.getBlogsServices = async ({ q, page, cat }) => {
       },
     ]);
 
+
+
     for (const blog of blogs) {
-      if (!blog.image.includes("imagekit")) {
-        const getObjectParams = {
-          Bucket: bucket_Name,
-          Key: blog.image,
-        };
-        const command = new GetObjectCommand(getObjectParams);
-        const url = await getSignedUrl(s3, command);
-        blog.image = url;
-      }
+      const url = `https://dk3vy6fruyw6l.cloudfront.net/${blog.image}`;
+      blog.image = url;
     }
 
     if (blogs.length === 0) {
