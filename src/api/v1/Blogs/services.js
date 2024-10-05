@@ -295,15 +295,8 @@ exports.singleBlogServices = async ({ q }) => {
     }
 
     for (const blog of blogs) {
-      if (!blog.image.includes("imagekit")) {
-        const getObjectParams = {
-          Bucket: bucket_Name,
-          Key: blog.image,
-        };
-        const command = new GetObjectCommand(getObjectParams);
-        const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
-        blog.image = url;
-      }
+      const url = `https://dk3vy6fruyw6l.cloudfront.net/${blog.image}`;
+      blog.image = url;
     }
 
     response.data = { blogs };
@@ -335,17 +328,9 @@ exports.singleBlogByIdServices = async ({ id }) => {
       response.message = "Error. Try again";
       return response;
     }
-
     for (const blog of blogs) {
-      if (!blog.image.includes("imagekit")) {
-        const getObjectParams = {
-          Bucket: bucket_Name,
-          Key: blog.image,
-        };
-        const command = new GetObjectCommand(getObjectParams);
-        const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
-        blog.image = url;
-      }
+      const url = `https://dk3vy6fruyw6l.cloudfront.net/${blog.image}`;
+      blog.image = url;
     }
 
     // console.log(blogs);
